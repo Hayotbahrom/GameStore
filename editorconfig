@@ -6,6 +6,7 @@
 # Code files
 [*.{cs,vb}]
 
+dotnet_diagnostic.SA1636.severity = none
 
 dotnet_diagnostic.ASP0001.severity = none
 

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "4Aoq+yPQUpQ=",
+  "dgSpecHash": "XUz3h2iBAuw=",
   "success": true,
   "projectFilePath": "E:\\GameStore\\GameStore.MVC\\GameStore.MVC.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Hayotbahrom\\.nuget\\packages\\stylecop.analyzers.unstable\\1.2.0.435\\stylecop.analyzers.unstable.1.2.0.435.nupkg.sha512"
+  ],
   "logs": []
 }
