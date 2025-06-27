@@ -2850,8 +2850,8 @@
     },
     "GameStore.Infrastructure/1.0.0": {
       "type": "project",
-      "path": "../GameStore.Service/GameStore.Infrastructure.csproj",
-      "msbuildProject": "../GameStore.Service/GameStore.Infrastructure.csproj"
+      "path": "../GameStore.Infrastructure/GameStore.Infrastructure.csproj",
+      "msbuildProject": "../GameStore.Infrastructure/GameStore.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2893,8 +2893,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "E:\\GameStore\\GameStore.Service\\GameStore.Infrastructure.csproj": {
-              "projectPath": "E:\\GameStore\\GameStore.Service\\GameStore.Infrastructure.csproj"
+            "E:\\GameStore\\GameStore.Infrastructure\\GameStore.Infrastructure.csproj": {
+              "projectPath": "E:\\GameStore\\GameStore.Infrastructure\\GameStore.Infrastructure.csproj"
             }
           }
         }

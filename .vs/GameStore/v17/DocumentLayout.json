@@ -3,16 +3,8 @@
   "WorkspaceRootPath": "E:\\GameStore\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|e:\\gamestore\\gamestore.mvc\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|solutionrelative:gamestore.mvc\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|e:\\gamestore\\gamestore.mvc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|solutionrelative:gamestore.mvc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|e:\\gamestore\\gamestore.mvc\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|solutionrelative:gamestore.mvc\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3F55601E-2B8D-40F2-B692-F89AE7238AD7}|GameStore.MVC\\GameStore.MVC.csproj|e:\\gamestore\\gamestore.mvc\\gamestore.mvc.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -26,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -58,52 +50,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "GameStore.MVC.csproj",
+              "DocumentIndex": 1,
+              "Title": "GameStore.MVC",
               "DocumentMoniker": "E:\\GameStore\\GameStore.MVC\\GameStore.MVC.csproj",
               "RelativeDocumentMoniker": "GameStore.MVC\\GameStore.MVC.csproj",
               "ToolTip": "E:\\GameStore\\GameStore.MVC\\GameStore.MVC.csproj",
               "RelativeToolTip": "GameStore.MVC\\GameStore.MVC.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAABeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-06-26T16:52:00.465Z"
+              "WhenOpened": "2025-06-27T12:37:34.471Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\GameStore\\GameStore.MVC\\Program.cs",
               "RelativeDocumentMoniker": "GameStore.MVC\\Program.cs",
               "ToolTip": "E:\\GameStore\\GameStore.MVC\\Program.cs",
               "RelativeToolTip": "GameStore.MVC\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAXAAAA",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAAB0AAAAxAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T11:27:50.663Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ErrorViewModel.cs",
-              "DocumentMoniker": "E:\\GameStore\\GameStore.MVC\\Models\\ErrorViewModel.cs",
-              "RelativeDocumentMoniker": "GameStore.MVC\\Models\\ErrorViewModel.cs",
-              "ToolTip": "E:\\GameStore\\GameStore.MVC\\Models\\ErrorViewModel.cs",
-              "RelativeToolTip": "GameStore.MVC\\Models\\ErrorViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T11:27:47.37Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "E:\\GameStore\\GameStore.MVC\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "GameStore.MVC\\Controllers\\HomeController.cs",
-              "ToolTip": "E:\\GameStore\\GameStore.MVC\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "GameStore.MVC\\Controllers\\HomeController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAjAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T11:25:32.019Z",
+              "WhenOpened": "2025-06-27T12:32:52.851Z",
               "EditorCaption": ""
             }
           ]
