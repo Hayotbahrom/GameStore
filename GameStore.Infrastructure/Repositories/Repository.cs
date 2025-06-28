@@ -21,50 +21,50 @@ namespace GameStore.Infrastructure.Repositories
         where T : class
     {
         /// <summary>
-        /// The database context.
-        /// </summary>
-        protected readonly GameStoreDbContext context;
-
-        /// <summary>
-        /// The entity set .
-        /// </summary>
-        private readonly DbSet<T> dbSet;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Repository{T}"/> class.
         /// </summary>
-        /// <param name="gameStoreDbContext">Database context. </param>
-        public Repository(GameStoreDbContext gameStoreDbContext)
+        /// <param name="context">The database context.</param>
+        public Repository(GameStoreDbContext context)
         {
-            this.context = gameStoreDbContext;
-            this.dbSet = this.context.Set<T>();
+            this.Context = context;
+            this.DbSet = context.Set<T>();
         }
+
+        /// <summary>
+        /// Gets the entity set for the repository.
+        /// </summary>
+        protected DbSet<T> DbSet { get; }
+
+        /// <summary>
+        /// Gets the database context.
+        /// </summary>
+        protected GameStoreDbContext Context { get; }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-            => await this.dbSet
+            => await this.DbSet
                 .Where(predicate)
                 .AsNoTracking()
                 .ToListAsync();
 
         /// <inheritdoc/>
         public async Task<T?> FindByIdAsync(Guid id)
-            => await this.dbSet.FindAsync(id);
+            => await this.DbSet.FindAsync(id);
 
         /// <inheritdoc/>
         public IQueryable<T> GetAll()
-            => this.dbSet.AsNoTracking();
+            => this.DbSet.AsNoTracking();
 
         /// <inheritdoc/>
         public async Task Add(T entity)
-            => await this.dbSet.AddAsync(entity);
+            => await this.DbSet.AddAsync(entity);
 
         /// <inheritdoc/>
         public void Delete(T entity)
-            => this.dbSet.Remove(entity);
+            => this.DbSet.Remove(entity);
 
         /// <inheritdoc/>
         public void Update(T entity)
-            => this.dbSet.Update(entity);
+            => this.DbSet.Update(entity);
     }
 }
