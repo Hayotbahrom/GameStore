@@ -56,7 +56,7 @@ namespace GameStore.Infrastructure.Repositories
             => this.DbSet.AsNoTracking();
 
         /// <inheritdoc/>
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
             => await this.DbSet.AddAsync(entity);
 
         /// <inheritdoc/>

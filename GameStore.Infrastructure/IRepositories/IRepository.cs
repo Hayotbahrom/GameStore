@@ -19,7 +19,7 @@ namespace GameStore.Infrastructure.IRepositories
         /// </summary>
         /// <param name="entity">The entity to add.</param>
         /// <returns>Entity .</returns>
-        Task Add(TEntity entity);
+        Task AddAsync(TEntity entity);
 
         /// <summary>
         /// Updates an existing entity in the repository.

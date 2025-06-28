@@ -3,10 +3,6 @@
 // </copyright>
 namespace GameStore.Infrastructure.Repositories
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using GameStore.Infrastructure.DbContexts;
     using GameStore.Infrastructure.IRepositories;
@@ -35,19 +31,19 @@ namespace GameStore.Infrastructure.Repositories
             IPlatformRepository platformRepository)
         {
             this.context = context;
-            this.GameRepository = gameRepository;
-            this.GenreRepository = genreRepository;
-            this.PlatformRepository = platformRepository;
+            this.Games = gameRepository;
+            this.Genres = genreRepository;
+            this.Platforms = platformRepository;
         }
 
         /// <inheritdoc/>
-        public IGameRepository GameRepository { get; }
+        public IGameRepository Games { get; }
 
         /// <inheritdoc/>
-        public IPlatformRepository PlatformRepository { get; }
+        public IPlatformRepository Platforms { get; }
 
         /// <inheritdoc/>
-        public IGenreRepository GenreRepository { get; }
+        public IGenreRepository Genres { get; }
 
         /// <inheritdoc/>
         public async Task<int> SaveChangesAsync()
