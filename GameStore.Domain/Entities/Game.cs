@@ -37,11 +37,11 @@ namespace GameStore.Domain.Entities
         /// <summary>
         /// Gets or sets the list of game-genre relationships.
         /// </summary>
-        public ICollection<GameGenre>? GameGenres { get; set; }
+        public ICollection<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
 
         /// <summary>
         /// Gets or sets the list of game-platform relationships.
         /// </summary>
-        public ICollection<GamePlatform>? GamePlatforms { get; set; }
+        public ICollection<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
     }
 }
