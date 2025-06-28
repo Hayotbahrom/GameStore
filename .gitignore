@@ -404,3 +404,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Visual Studio
+.vs/
+*.suo
+
+# Build output
+bin/
+obj/
