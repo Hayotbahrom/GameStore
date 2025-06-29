@@ -6,7 +6,7 @@ namespace GameStore.Application.Interfaces
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using GameStore.Application.DTOs;
+    using GameStore.Application.DTOs.Games;
 
     /// <summary>
     /// Provides an interface for game services.
@@ -51,8 +51,8 @@ namespace GameStore.Application.Interfaces
         /// Adds a new game asynchronously.
         /// </summary>
         /// <param name="game">The game to add.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        Task AddGameAsync(GameForCreationDto game);
+        /// <returns>A created game.</returns>
+        Task<GameForResultDto> AddGameAsync(GameForCreationDto game);
 
         /// <summary>
         /// Updates an existing game asynchronously.

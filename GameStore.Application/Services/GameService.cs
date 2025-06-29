@@ -8,7 +8,7 @@ namespace GameStore.Application.Services
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
-    using GameStore.Application.DTOs;
+    using GameStore.Application.DTOs.Games;
     using GameStore.Application.Interfaces;
     using GameStore.Domain.Entities;
     using GameStore.Infrastructure.IRepositories;
@@ -42,7 +42,7 @@ namespace GameStore.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task AddGameAsync(GameForCreationDto game)
+        public async Task<GameForResultDto> AddGameAsync(GameForCreationDto game)
         {
             if (game == null)
             {
@@ -61,6 +61,7 @@ namespace GameStore.Application.Services
 
             await this.unitOfWork.Games.AddAsync(resultGame);
             await this.unitOfWork.SaveChangesAsync();
+            return this.mapper.Map<GameForResultDto>(resultGame);
         }
 
         /// <inheritdoc/>
