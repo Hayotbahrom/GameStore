@@ -52,7 +52,7 @@ namespace GameStore.Infrastructure.Repositories
             => await this.DbSet.FindAsync(id);
 
         /// <inheritdoc/>
-        public IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
             => this.DbSet.AsNoTracking();
 
         /// <inheritdoc/>

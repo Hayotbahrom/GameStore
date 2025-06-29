@@ -27,6 +27,16 @@ namespace GameStore.Infrastructure.Repositories
         }
 
         /// <inheritdoc/>
+        public override IQueryable<Game> GetAll()
+        {
+            return this.DbSet
+                .Include(g => g.GameGenres)
+                    .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GamePlatforms)
+                    .ThenInclude(gp => gp.Platform);
+        }
+
+        /// <inheritdoc/>
         public async Task<Game?> GetByKeyAsync(string key)
         {
             return await this.DbSet.FirstOrDefaultAsync(g => g.Key == key);
