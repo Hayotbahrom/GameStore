@@ -13,17 +13,17 @@ namespace GameStore.Infrastructure.IRepositories
         /// <summary>
         /// Gets the repository for managing games.
         /// </summary>
-        IGameRepository GameRepository { get; }
+        IGameRepository Games { get; }
 
         /// <summary>
         /// Gets the repository for managing platforms.
         /// </summary>
-        IPlatformRepository PlatformRepository { get; }
+        IPlatformRepository Platforms { get; }
 
         /// <summary>
         /// Gets the repository for managing genres.
         /// </summary>
-        IGenreRepository GenreRepository { get; }
+        IGenreRepository Genres { get; }
 
         /// <summary>
         /// Asynchronously saves changes to the database.

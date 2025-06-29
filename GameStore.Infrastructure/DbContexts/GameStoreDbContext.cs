@@ -90,6 +90,64 @@ namespace GameStore.Infrastructure.DbContexts
                 .HasOne(gp => gp.Platform)
                 .WithMany(g => g.GamePlatforms)
                 .HasForeignKey(gp => gp.PlatformId);
+
+            modelBuilder.Entity<Game>().HasData(
+                 new Game
+                 {
+                     Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+                     Name = "Super Strategy Game",
+                     Key = "super-strategy",
+                     Description = "A deep and challenging strategy game.",
+                 },
+                 new Game
+                 {
+                     Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+                     Name = "Arcade Shooter",
+                     Key = "arcade-shooter",
+                     Description = "Fast-paced arcade FPS experience.",
+                 });
+
+            // Seed Platforms
+            modelBuilder.Entity<Platform>().HasData(
+                new Platform { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Type = "Mobile" },
+                new Platform { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Type = "Browser" },
+                new Platform { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Type = "Desktop" },
+                new Platform { Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), Type = "Console" });
+
+            // Seed Genres
+            modelBuilder.Entity<Genre>().HasData(
+                new Genre { Id = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "Strategy" },
+                new Genre { Id = Guid.Parse("aaa22222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "RTS", ParentGenreId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa") },
+                new Genre { Id = Guid.Parse("aaa33333-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "TBS", ParentGenreId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa") },
+                new Genre { Id = Guid.Parse("bbb11111-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Name = "RPG" },
+                new Genre { Id = Guid.Parse("ccc11111-cccc-cccc-cccc-cccccccccccc"), Name = "Action" },
+                new Genre { Id = Guid.Parse("ccc22222-cccc-cccc-cccc-cccccccccccc"), Name = "FPS", ParentGenreId = Guid.Parse("ccc11111-cccc-cccc-cccc-cccccccccccc") });
+
+            // Seed GameGenre
+            modelBuilder.Entity<GameGenre>().HasData(
+                new GameGenre
+                {
+                    GameId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+                    GenreId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                },
+                new GameGenre
+                {
+                    GameId = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+                    GenreId = Guid.Parse("ccc22222-cccc-cccc-cccc-cccccccccccc"),
+                });
+
+            // Seed GamePlatform
+            modelBuilder.Entity<GamePlatform>().HasData(
+                new GamePlatform
+                {
+                    GameId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+                    PlatformId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                },
+                new GamePlatform
+                {
+                    GameId = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+                    PlatformId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                });
         }
     }
 }

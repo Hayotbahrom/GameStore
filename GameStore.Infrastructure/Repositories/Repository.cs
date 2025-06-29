@@ -52,11 +52,11 @@ namespace GameStore.Infrastructure.Repositories
             => await this.DbSet.FindAsync(id);
 
         /// <inheritdoc/>
-        public IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
             => this.DbSet.AsNoTracking();
 
         /// <inheritdoc/>
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
             => await this.DbSet.AddAsync(entity);
 
         /// <inheritdoc/>
