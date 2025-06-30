@@ -12,9 +12,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GameStore.Application\GameStore.Application.csproj" />
     <ProjectReference Include="..\GameStore.Infrastructure\GameStore.Infrastructure.csproj" />
   </ItemGroup>
 
