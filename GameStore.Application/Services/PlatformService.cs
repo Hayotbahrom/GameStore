@@ -92,5 +92,14 @@ namespace GameStore.Application.Services
             await this.unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Guid>> GetPlatformIdsByGameNamesAsync(IEnumerable<string> gameNames)
+        {
+            var platforms = await this.unitOfWork.Platforms.GetAll().ToListAsync();
+            return platforms
+                .Where(p => gameNames.Contains(p.Type))
+                .Select(p => p.Id);
+        }
     }
 }

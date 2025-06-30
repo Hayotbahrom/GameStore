@@ -131,10 +131,15 @@ namespace GameStore.Application.Services
             existingGame.Name = game.Name;
             existingGame.Description = game.Description;
             existingGame.Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key;
-            existingGame.GameGenres = game.GenreIds.Select(id => new GameGenre { GenreId = id }).ToList();
-            existingGame.GamePlatforms = game.PlatformIds.Select(id => new GamePlatform { PlatformId = id }).ToList();
+            existingGame.GameGenres = game.GenreIds
+               .Select(id => new GameGenre { GameId = game.Id, GenreId = id })
+               .ToList();
 
-            await this.unitOfWork.SaveChangesAsync();
+            existingGame.GamePlatforms = game.PlatformIds
+                .Select(id => new GamePlatform { GameId = game.Id, PlatformId = id })
+                .ToList();
+
+            var result = await this.unitOfWork.SaveChangesAsync();
             return true;
         }
 

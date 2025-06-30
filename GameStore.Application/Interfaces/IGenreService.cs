@@ -22,5 +22,12 @@ namespace GameStore.Application.Interfaces
         Task<Guid> AddAsync(GenreForCreationDto dto);
         Task<bool> UpdateAsync(GenreForUpdateDto dto);
         Task<bool> DeleteAsync(Guid id);
+
+        /// <summary>
+        /// Gets genre IDs associated with specific game names.
+        /// </summary>
+        /// <param name="gameNames"></param>
+        /// <returns></returns>
+        public Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames);
     }
 }

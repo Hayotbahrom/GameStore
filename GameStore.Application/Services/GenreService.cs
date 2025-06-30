@@ -89,5 +89,14 @@ namespace GameStore.Application.Services
             await this.unitOfWork.SaveChangesAsync();
             return true; 
         }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames)
+        {
+            var genres = await this.unitOfWork.Genres.GetAll().ToListAsync();
+            return genres
+                .Where(g => gameNames.Contains(g.Name))
+                .Select(g => g.Id);
+        }
     }
 }
