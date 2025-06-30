@@ -39,7 +39,12 @@ namespace GameStore.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<Game?> GetByKeyAsync(string key)
         {
-            return await this.DbSet.FirstOrDefaultAsync(g => g.Key == key);
+            return await this.DbSet
+                .Include(g => g.GameGenres)
+                    .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GamePlatforms)
+                    .ThenInclude(gp => gp.Platform)
+                 .FirstOrDefaultAsync(g => g.Key == key);
         }
 
         /// <inheritdoc/>
@@ -47,6 +52,10 @@ namespace GameStore.Infrastructure.Repositories
         {
             return await this.DbSet
                 .Where(g => g.GameGenres != null && g.GameGenres.Any(gg => gg.GenreId == genreId))
+                .Include(g => g.GameGenres)
+                    .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GamePlatforms)
+                    .ThenInclude(gp => gp.Platform)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -56,6 +65,10 @@ namespace GameStore.Infrastructure.Repositories
         {
             return await this.DbSet
                 .Where(g => g.GamePlatforms != null && g.GamePlatforms.Any(gp => gp.PlatformId == platformId))
+                .Include(g => g.GameGenres)
+                    .ThenInclude(gg => gg.Genre)
+                .Include(g => g.GamePlatforms)
+                    .ThenInclude(gp => gp.Platform)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -68,7 +81,6 @@ namespace GameStore.Infrastructure.Repositories
                     .ThenInclude(g => g.Genre)
                 .Include(gp => gp.GamePlatforms)
                     .ThenInclude(p => p.Platform)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(g => g.Id == id);
         }
     }
