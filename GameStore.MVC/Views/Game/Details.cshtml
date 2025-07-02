@@ -1,0 +1,47 @@
+﻿@using GameStore.Application.DTOs.Games
+@model GameForResultDto
+
+
+@{
+    ViewData["Title"] = "Game details";
+}
+
+<h2>Game Details</h2>
+
+<div>
+    <h4>@Model.Name</h4>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">Key</dt>
+        <dd class="col-sm-10">@Model.Key</dd>
+
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+
+        <dt class="col-sm-2">Genres</dt>
+        <dd class="col-sm-10">
+            @if (Model.Genres != null && Model.Genres.Any())
+            {
+                <ul>
+                    @foreach (var genre in Model.Genres)
+                    {
+                        <li>@genre</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No genres assigned.</span>
+            }
+            </<dd>
+        <dt class="col-sm-2">Platforms</dt>
+        <dd class="col-sm-10">
+            @string.Join(", ", Model.Platforms)
+        </dd>
+        </dd>
+    </dl>
+
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

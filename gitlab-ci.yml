@@ -1,0 +1,13 @@
+variables:
+  PROJECT_NAME: '.'
+
+stages:
+  - build
+
+build:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  stage: build
+  script:
+    - dotnet workload update
+    - dotnet restore GameStore.sln
+    - dotnet build GameStore.sln --configuration Release

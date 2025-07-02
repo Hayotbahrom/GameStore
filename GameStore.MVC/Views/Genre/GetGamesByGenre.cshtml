@@ -1,0 +1,47 @@
+﻿@model IEnumerable<GameStore.Application.DTOs.Games.GameForResultDto>
+
+@{
+    ViewData["Title"] = "Games by Genre";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No games found for this genre.</div>
+    <br/>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Key</th>
+                <th>Description</th>
+                <th>Genres</th>
+                <th>Platforms</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model)
+            {
+                <tr>
+                    <td>@game.Name</td>
+                    <td>@game.Key</td>
+                    <td>@game.Description</td>
+                    <td>@string.Join(", ", game.Genres)</td>
+                    <td>@string.Join(", ", game.Platforms)</td>
+                    <td>
+                        <a asp-controller="Game" asp-action="Details" asp-route-id="@game.Id" class="btn btn-info btn-sm">Details</a>
+                        <a asp-controller="Game" asp-action="Edit" asp-route-id="@game.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-controller="Game" asp-action="Delete" asp-route-id="@game.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}

@@ -1,0 +1,19 @@
+﻿@using GameStore.Application.DTOs.Genres
+@model GenreForResultDto
+
+@{
+    ViewData["Title"] = "Genre details";
+}
+
+<h2>Genre Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-2">Name</dt>
+    <dd class="col-sm-10">@Model.Name</dd>
+
+    <dt class="col-sm-2">Parent Genre</dt>
+    <dd class="col-sm-10">@(Model.ParentGenreName ?? "None")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

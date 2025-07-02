@@ -1,0 +1,28 @@
+﻿@using GameStore.Application.DTOs.Genres
+@model GenreForCreationDto
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create new genre</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ParentGenreId"></label>
+        <select asp-for="ParentGenreId" class="form-control"
+                asp-items="@(new SelectList(ViewBag.Genres, "Value", "Text"))">
+            <option value="">-- No Parent Genre --</option>
+        </select>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

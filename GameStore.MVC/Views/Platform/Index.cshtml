@@ -1,0 +1,36 @@
+﻿@using GameStore.Application.DTOs.Platforms
+@model IEnumerable<PlatformForResultDto>
+
+<h2>Platforms</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Platform</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Actions</th>
+            <th>Games</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var platform in Model)
+        {
+            <tr>
+                <td>@platform.Type</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@platform.Id" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@platform.Id" class="btn btn-link">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@platform.Id" class=" btn btn-danger" onclick="return confirm('Are you sure you want to delete this platform?')">
+                        Delete
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="GetGamesByPlatform" asp-route-id="@platform.Id" class="btn btn-outline-primary btn-sm">View Games</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

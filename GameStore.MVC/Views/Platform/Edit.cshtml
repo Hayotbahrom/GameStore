@@ -1,0 +1,24 @@
+﻿@using GameStore.Application.DTOs.Platforms
+@model PlatformForUpdateDto
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Update platform</h1>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Type" class="control-label"></label>
+        <input asp-for="Type" class="form-control" />
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
