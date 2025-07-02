@@ -23,6 +23,6 @@ namespace GameStore.Application.DTOs.Genres
         /// <summary>
         /// Gets or sets the Id of the parent genre, if this genre is a sub-genre.
         /// </summary>
-        public Guid? ParentGenreId { get; set; }
+        public string? ParentGenreName { get; set; }
     }
 }

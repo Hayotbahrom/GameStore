@@ -32,7 +32,9 @@ namespace GameStore.Application.Mappings
             // Genre
             this.CreateMap<Genre, GenreForCreationDto>().ReverseMap();
             this.CreateMap<Genre, GenreForUpdateDto>().ReverseMap();
-            this.CreateMap<Genre, GenreForResultDto>().ReverseMap();
+            this.CreateMap<Genre, GenreForResultDto>()
+                .ForMember(dest => dest.ParentGenreName,
+                opt => opt.MapFrom(src => src.ParentGenre != null ? src.ParentGenre.Name : null));
 
             // Platform
             this.CreateMap<Platform, PlatformForCreationDto>().ReverseMap();
