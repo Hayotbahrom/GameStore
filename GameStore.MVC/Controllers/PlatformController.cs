@@ -42,6 +42,7 @@ namespace GameStore.MVC.Controllers
         /// </summary>
         /// <returns>Index view. </returns>
         // GET: PlatformController
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<ActionResult> Index()
         {
             var platforms = await this.platformService.GetAllPlatformsAsync();
@@ -165,6 +166,7 @@ namespace GameStore.MVC.Controllers
         /// </summary>
         /// <param name="id">Platform id.</param>
         /// <returns>GetGamesByPlatform view.</returns>
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
         public async Task<IActionResult> GetGamesByPlatform(Guid id)
         {
             var games = await this.gameService.GetByPlatformAsync(id);

@@ -56,6 +56,7 @@ namespace GameStore.MVC.Controllers
         /// <param name="genreId">Genre ID for filtering games.</param>
         /// <param name="platformId">Platform ID for filtering games.</param>
         /// <returns>Index view. </returns>
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> Index(string? key, Guid? genreId, Guid? platformId)
         {
             var games = await this.gameService.GetAllAsync();

@@ -42,6 +42,8 @@ namespace GameStore.MVC
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IPlatformService, PlatformService>();
 
+            builder.Services.AddResponseCaching();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -57,11 +59,13 @@ namespace GameStore.MVC
 
             app.UseRouting();
 
+            app.UseResponseCaching();
+
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Game}/{action=Index}/{id?}");
 
             app.Run();
         }

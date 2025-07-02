@@ -42,6 +42,7 @@ namespace GameStore.MVC.Controllers
         /// </summary>
         /// <returns>Index view.</returns>
         [HttpGet("index")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> Index()
         {
             var genres = await this.genreService.GetAllAsync();
@@ -156,6 +157,7 @@ namespace GameStore.MVC.Controllers
         /// <param name="id">Genre id.</param>
         /// <returns>GetGamesByGenre view.</returns>
         [HttpGet("{id}/games")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
         public async Task<IActionResult> GetGamesByGenre(Guid id)
         {
             var games = await this.gameService.GetByGenreAsync(id);
@@ -168,6 +170,7 @@ namespace GameStore.MVC.Controllers
         /// <param name="id">Parent-genre id.</param>
         /// <returns>GetSubgenres view, List of genres.</returns>
         [HttpGet("/genres/{id}/genres")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, NoStore = false)]
         public async Task<IActionResult> GetSubGenres(Guid id)
         {
             var subGenres = await this.genreService.GetByParentIdAsync(id);
