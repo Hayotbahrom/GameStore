@@ -1,0 +1,47 @@
+﻿@model GameStore.Application.DTOs.Games.GameForUpdateDto
+
+@{
+    ViewData["Title"] = "Edit Game";
+}
+
+<h2>Edit Game</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Key"></label>
+        <input asp-for="Key" class="form-control" />
+        <span asp-validation-for="Key" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Genres</label>
+        <select asp-for="GenreIds" class="form-control" asp-items="ViewBag.Genres" multiple></select>
+    </div>
+
+    <div class="form-group">
+        <label>Platforms</label>
+        <select asp-for="PlatformIds" class="form-control" asp-items="ViewBag.Platforms" multiple></select>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

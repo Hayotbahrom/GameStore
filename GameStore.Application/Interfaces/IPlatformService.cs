@@ -53,5 +53,12 @@ namespace GameStore.Application.Interfaces
         /// </summary>
         /// <param name="id">The unique identifier of the platform to delete.</param>
         Task<bool> DeletePlatformAsync(Guid id);
+
+        /// <summary>
+        /// Gets platform IDs by game names.
+        /// </summary>
+        /// <param name="gameNames"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Guid>> GetPlatformIdsByGameNamesAsync(IEnumerable<string> gameNames);
     }
 }

@@ -3,7 +3,12 @@
 // </copyright>
 namespace GameStore.MVC
 {
+    using GameStore.Application.Interfaces;
+    using GameStore.Application.Mappings;
+    using GameStore.Application.Services;
     using GameStore.Infrastructure.DbContexts;
+    using GameStore.Infrastructure.IRepositories;
+    using GameStore.Infrastructure.Repositories;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -25,6 +30,20 @@ namespace GameStore.MVC
             builder.Services.AddDbContext<GameStoreDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+            builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+            builder.Services.AddScoped<IGameRepository, GameRepository>();
+
+            builder.Services.AddScoped<IGameService, GameService>();
+            builder.Services.AddScoped<IGenreService, GenreService>();
+            builder.Services.AddScoped<IPlatformService, PlatformService>();
+
+            builder.Services.AddResponseCaching();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -40,11 +59,13 @@ namespace GameStore.MVC
 
             app.UseRouting();
 
+            app.UseResponseCaching();
+
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Game}/{action=Index}/{id?}");
 
             app.Run();
         }

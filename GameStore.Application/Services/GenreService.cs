@@ -53,7 +53,11 @@ namespace GameStore.Application.Services
 
         public async Task<IEnumerable<GenreForResultDto>> GetAllAsync()
         {
-            var genres = await this.unitOfWork.Genres.GetAll().ToListAsync();
+            var genres = await this.unitOfWork.Genres
+                .GetAll()
+                .Include(x => x.ParentGenre)
+                .ToListAsync();
+
             return this.mapper.Map<IEnumerable<GenreForResultDto>>(genres);
         }
 
@@ -69,6 +73,17 @@ namespace GameStore.Application.Services
             return this.mapper.Map<GenreForResultDto>(genre);
         }
 
+        /// </inheritdoc/>
+        public async Task<GenreForUpdateDto?>  GenreForUpdateDtoAsync(Guid id)
+        {
+            var genre = await this.unitOfWork.Genres.FindByIdAsync(id);
+            if (genre == null)
+            {
+                return null; // Genre not found
+            }
+            return this.mapper.Map<GenreForUpdateDto>(genre);
+            
+        }
         public async Task<IEnumerable<GenreForResultDto>> GetByParentIdAsync(Guid parentId)
         {
             var genres = await this.unitOfWork.Genres.GetByParentIdAsync(parentId);
@@ -88,6 +103,15 @@ namespace GameStore.Application.Services
 
             await this.unitOfWork.SaveChangesAsync();
             return true; 
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames)
+        {
+            var genres = await this.unitOfWork.Genres.GetAll().ToListAsync();
+            return genres
+                .Where(g => gameNames.Contains(g.Name))
+                .Select(g => g.Id);
         }
     }
 }

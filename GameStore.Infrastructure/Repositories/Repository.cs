@@ -44,16 +44,15 @@ namespace GameStore.Infrastructure.Repositories
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
             => await this.DbSet
                 .Where(predicate)
-                .AsNoTracking()
                 .ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<T?> FindByIdAsync(Guid id)
+        public virtual async Task<T?> FindByIdAsync(Guid id)
             => await this.DbSet.FindAsync(id);
 
         /// <inheritdoc/>
         public virtual IQueryable<T> GetAll()
-            => this.DbSet.AsNoTracking();
+            => this.DbSet;
 
         /// <inheritdoc/>
         public async Task AddAsync(T entity)

@@ -2,6 +2,10 @@
 
 # New Rule Set
 # Description:  
+root = true
+
+[*.cs]
+dotnet_diagnostic.SA0001.severity = none
 
 # Code files
 [*.{cs,vb}]

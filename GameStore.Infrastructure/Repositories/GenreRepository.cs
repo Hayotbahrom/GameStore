@@ -45,5 +45,13 @@ namespace GameStore.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        /// <inheritdoc/>
+        public override async Task<Genre?> FindByIdAsync(Guid id)
+        {
+            return await this.Context.Genres
+                .Include(g => g.ParentGenre)
+                .FirstOrDefaultAsync(g => g.Id == id);
+        }
     }
 }

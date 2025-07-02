@@ -1,0 +1,41 @@
+﻿@model IEnumerable<GameStore.Application.DTOs.Games.GameForResultDto>
+
+@{
+    ViewData["Title"] = "Games by Platform id";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No games found for this platform.</div>
+    <br />
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Key</th>
+                <th>Description</th>
+                <th>Genres</th>
+                <th>Platforms</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model)
+            {
+                <tr>
+                    <td>@game.Name</td>
+                    <td>@game.Key</td>
+                    <td>@game.Description</td>
+                    <td>@string.Join(", ", game.Genres)</td>
+                    <td>@string.Join(", ", game.Platforms)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+}
