@@ -27,8 +27,9 @@
             <option value="@platform.Value">@platform.Text</option>
         }
     </select>
-
+    <br/>
     <button type="submit" class="btn btn-primary">Apply</button>
+    <a class="btn btn-primary" asp-action="Create">Add New Game</a>
 </form>
 
 
@@ -41,6 +42,7 @@
             <th>Genres</th>
             <th>Platforms</th>
             <th>Action</th>
+            <th>File</th>
         </tr>
     </thead>
     <tbody>
@@ -49,7 +51,9 @@
             <tr>
                 <td>@game.Name</td>
                 <td>@game.Key</td>
-                <td>@game.Description</td>
+                <td title="@game.Description">
+                    @(game.Description?.Length > 30 ? game.Description.Substring(0, 30) + "..." : game.Description)
+                </td>
                 <td>
                     @string.Join(", ", game.Genres)
                 </td>
@@ -57,15 +61,18 @@
                     @string.Join(", ", game.Platforms)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@game.Id">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@game.Id">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@game.Id" onclick="return confirm('Are you sure you want to delete this game?')">
+                    <a asp-action="Details" asp-route-id="@game.Id" class="btn btn-link">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-warning">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@game.Id"
+                        class="btn btn-danger" 
+                        onclick="return confirm('Are you sure you want to delete this game?')">
                         Delete
                     </a>
+                </td>
+                <td>
+                    <a asp-action="Download" asp-route-id="@game.Id" class="btn btn-sm btn-success">Download</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-<a class="btn btn-primary" asp-action="Create">Add New Game</a>

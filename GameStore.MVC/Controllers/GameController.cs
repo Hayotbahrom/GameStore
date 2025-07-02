@@ -24,11 +24,6 @@ namespace GameStore.MVC.Controllers
         private readonly IGameService gameService;
 
         /// <summary>
-        /// The unit of work instance used for database operations.
-        /// </summary>
-        private readonly IUnitOfWork unitOfWork;
-
-        /// <summary>
         /// The genre service instance used for genre-related operations.
         /// </summary>
         private readonly IGenreService genreService;
@@ -42,17 +37,14 @@ namespace GameStore.MVC.Controllers
         /// Initializes a new instance of the <see cref="GameController"/> class with the specified game service.
         /// </summary>
         /// <param name="gameService">GameService instance. </param>
-        /// <param name="unitOfWork">UnitOfWork instance.</param>
         /// <param name="genreService">GenreService instance.</param>
         /// <param name="platformService">PlatformService instance.</param>
         public GameController(
             IGameService gameService,
-            IUnitOfWork unitOfWork,
             IGenreService genreService,
             IPlatformService platformService)
         {
             this.gameService = gameService;
-            this.unitOfWork = unitOfWork;
             this.genreService = genreService;
             this.platformService = platformService;
         }
@@ -74,20 +66,25 @@ namespace GameStore.MVC.Controllers
                 games = game is null ? Enumerable.Empty<GameForResultDto>() : new[] { game };
             }
 
-            // Filter by genre
             if (genreId.HasValue)
             {
                 games = await this.gameService.GetByGenreAsync(genreId.Value);
             }
 
-            // Filter by platform
             if (platformId.HasValue)
             {
                 games = await this.gameService.GetByPlatformAsync(platformId.Value);
             }
 
-            this.ViewBag.Genres = new SelectList(await this.genreService.GetAllAsync(), "Id", "Name");
-            this.ViewBag.Platforms = new SelectList(await this.platformService.GetAllPlatformsAsync(), "Id", "Type");
+            this.ViewBag.Genres = new SelectList(
+                await this.genreService.GetAllAsync(),
+                "Id",
+                "Name");
+
+            this.ViewBag.Platforms = new SelectList(
+                await this.platformService.GetAllPlatformsAsync(),
+                "Id",
+                "Type");
 
             return this.View(games);
         }
@@ -98,9 +95,7 @@ namespace GameStore.MVC.Controllers
         /// <returns>Create view.</returns>
         public async Task<IActionResult> Create()
         {
-            this.ViewBag.Genres = new MultiSelectList(await this.unitOfWork.Genres.GetAll().ToListAsync(), "Id", "Name");
-            this.ViewBag.Platforms = new MultiSelectList(await this.unitOfWork.Platforms.GetAll().ToListAsync(), "Id", "Type");
-
+            await this.PopulateViewBagAsync();
             return this.View();
         }
 
@@ -114,6 +109,7 @@ namespace GameStore.MVC.Controllers
         {
             if (!this.ModelState.IsValid)
             {
+                await this.PopulateViewBagAsync();
                 return this.View(game);
             }
 
@@ -160,8 +156,7 @@ namespace GameStore.MVC.Controllers
                 PlatformIds = (await this.platformService.GetPlatformIdsByGameNamesAsync(game.Platforms)).ToList(),
             };
 
-            this.ViewBag.Genres = new MultiSelectList(await this.unitOfWork.Genres.GetAll().ToListAsync(), "Id", "Name");
-            this.ViewBag.Platforms = new MultiSelectList(await this.unitOfWork.Platforms.GetAll().ToListAsync(), "Id", "Type");
+            await this.PopulateViewBagAsync();
 
             return this.View(dto);
         }
@@ -176,6 +171,7 @@ namespace GameStore.MVC.Controllers
         {
             if (!this.ModelState.IsValid)
             {
+                await this.PopulateViewBagAsync();
                 return this.View(dto);
             }
 
@@ -198,6 +194,43 @@ namespace GameStore.MVC.Controllers
 
             await this.gameService.DeleteGameAsync(id);
             return this.RedirectToAction(nameof(this.Index));
+        }
+
+        /// <summary>
+        /// Downloads the game details as a text file given its Id.
+        /// </summary>
+        /// <param name="id">Game id.</param>
+        /// <returns>Details file.</returns>
+        [HttpGet]
+        public async Task<IActionResult> Download(Guid id)
+        {
+            var game = await this.gameService.GetByIdAsync(id);
+            if (!this.ModelState.IsValid)
+            {
+                return this.NotFound();
+            }
+
+            var content = $"Name: {game.Name}\nKey: {game.Key}\nDescription: {game.Description}";
+            var bytes = System.Text.Encoding.UTF8.GetBytes(content);
+            var fileName = $"_{game.Key}.txt";
+
+            return this.File(bytes, "text/plain", fileName);
+        }
+
+        /// <summary>
+        /// Populates the ViewBag with genres and platforms for use in views.
+        /// </summary>
+        private async Task PopulateViewBagAsync()
+        {
+            this.ViewBag.Genres = new MultiSelectList(
+                await this.genreService.GetAllAsync(),
+                "Id",
+                "Name");
+
+            this.ViewBag.Platforms = new MultiSelectList(
+                await this.platformService.GetAllPlatformsAsync(),
+                "Id",
+                "Type");
         }
     }
 }
