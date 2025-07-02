@@ -38,14 +38,14 @@ namespace GameStore.Application.Interfaces
         /// <summary>
         /// Gets genres associated with a specific game key asynchronously.
         /// </summary>
-        /// <param name="gameKey"></param>
-        /// <returns></returns>
+        /// <param name="gameKey">Game key.</param>
+        /// <returns>List of games by given gamekey.</returns>
         Task<IEnumerable<GenreForResultDto>> GetByGameKeyAsync(string gameKey);
 
         /// <summary>
         /// Adds a new genre asynchronously.
         /// </summary>
-        /// <param name="dto"></param>
+        /// <param name="dto">GenreForCreation DTO.</param>
         /// <returns>New genre id.</returns>
         Task<Guid> AddAsync(GenreForCreationDto dto);
 

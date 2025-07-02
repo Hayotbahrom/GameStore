@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="GenreForUpdateDto.cs" company="Epam">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 namespace GameStore.Application.DTOs.Genres
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
+    /// <summary>
+    /// Represents of genre for update DTO.
+    /// </summary>
     public class GenreForUpdateDto
     {
         /// <summary>

@@ -6,7 +6,6 @@ namespace GameStore.Application.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
     using AutoMapper;
     using GameStore.Application.DTOs.Platforms;
@@ -14,11 +13,20 @@ namespace GameStore.Application.Services
     using GameStore.Domain.Entities;
     using GameStore.Infrastructure.IRepositories;
     using Microsoft.EntityFrameworkCore;
+
+    /// <summary>
+    /// Service for managing platform-related operations.
+    /// </summary>
     public class PlatformService : IPlatformService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlatformService"/> class.
+        /// </summary>
+        /// <param name="unitOfWork">The instance of unitOfWork.</param>
+        /// <param name="mapper">The mapper instance for mapping between entities and DTOs.</param>
         public PlatformService(
             IUnitOfWork unitOfWork,
             IMapper mapper)
@@ -26,13 +34,14 @@ namespace GameStore.Application.Services
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
+
         /// <inheritdoc />
         public async Task<PlatformForResultDto> CreatePlatformAsync(PlatformForCreationDto dto)
         {
             var platform = new Platform
             {
                 Id = Guid.NewGuid(),
-                Type = dto.Type
+                Type = dto.Type,
             };
 
             await this.unitOfWork.Platforms.AddAsync(platform);
@@ -76,19 +85,20 @@ namespace GameStore.Application.Services
             {
                 return null;
             }
+
             return this.mapper.Map<PlatformForResultDto>(platform);
         }
 
         /// <inheritdoc />
-        public async Task<bool> UpdatePlatformAsync(PlatformForUpdateDto platform)
+        public async Task<bool> UpdatePlatformAsync(PlatformForUpdateDto dto)
         {
-            var existingPlatform = await this.unitOfWork.Platforms.FindByIdAsync(platform.Id);
+            var existingPlatform = await this.unitOfWork.Platforms.FindByIdAsync(dto.Id);
             if (existingPlatform == null)
             {
                 return false;
             }
 
-            existingPlatform.Type = platform.Type;
+            existingPlatform.Type = dto.Type;
             await this.unitOfWork.SaveChangesAsync();
             return true;
         }

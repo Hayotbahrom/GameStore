@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="PlatformForUpdateDto.cs" company="Epam">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 namespace GameStore.Application.DTOs.Platforms
 {
+    using System.ComponentModel.DataAnnotations;
+
+    /// <summary>
+    /// Represents of platform for update DTO.
+    /// </summary>
     public class PlatformForUpdateDto
     {
         /// <summary>

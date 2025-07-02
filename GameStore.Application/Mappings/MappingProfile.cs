@@ -23,17 +23,20 @@ namespace GameStore.Application.Mappings
             this.CreateMap<Game, GameForCreationDto>().ReverseMap();
             this.CreateMap<Game, GameForUpdateDto>().ReverseMap();
             this.CreateMap<Game, GameForResultDto>()
-                .ForMember(dest => dest.Genres, 
-                opt => opt.MapFrom(src => src.GameGenres.Select(gg => gg.Genre != null ? gg.Genre.Name : string.Empty)))
-                .ForMember(dest => dest.Platforms, 
-                opt => opt.MapFrom(src => src.GamePlatforms.Select(gp => gp.Platform != null ? gp.Platform.Type : string.Empty)))
+                .ForMember(
+                    dest => dest.Genres,
+                    opt => opt.MapFrom(src => src.GameGenres.Select(gg => gg.Genre != null ? gg.Genre.Name : string.Empty)))
+                .ForMember(
+                    dest => dest.Platforms,
+                    opt => opt.MapFrom(src => src.GamePlatforms.Select(gp => gp.Platform != null ? gp.Platform.Type : string.Empty)))
                 .ReverseMap();
 
             // Genre
             this.CreateMap<Genre, GenreForCreationDto>().ReverseMap();
             this.CreateMap<Genre, GenreForUpdateDto>().ReverseMap();
             this.CreateMap<Genre, GenreForResultDto>()
-                .ForMember(dest => dest.ParentGenreName,
+                .ForMember(
+                dest => dest.ParentGenreName,
                 opt => opt.MapFrom(src => src.ParentGenre != null ? src.ParentGenre.Name : null));
 
             // Platform

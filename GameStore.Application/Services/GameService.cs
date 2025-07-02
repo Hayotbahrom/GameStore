@@ -12,7 +12,6 @@ namespace GameStore.Application.Services
     using GameStore.Application.Interfaces;
     using GameStore.Domain.Entities;
     using GameStore.Infrastructure.IRepositories;
-    using GameStore.Infrastructure.Repositories;
     using Microsoft.EntityFrameworkCore;
 
     /// <summary>
@@ -140,7 +139,7 @@ namespace GameStore.Application.Services
                 .ToList();
 
             var result = await this.unitOfWork.SaveChangesAsync();
-            return true;
+            return result > 0;
         }
 
         /// <summary>
