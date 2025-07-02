@@ -47,7 +47,7 @@ namespace GameStore.Infrastructure.Repositories
                 .ToListAsync();
 
         /// <inheritdoc/>
-        public async Task<T?> FindByIdAsync(Guid id)
+        public virtual async Task<T?> FindByIdAsync(Guid id)
             => await this.DbSet.FindAsync(id);
 
         /// <inheritdoc/>
