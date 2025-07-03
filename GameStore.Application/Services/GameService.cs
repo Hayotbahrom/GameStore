@@ -41,43 +41,6 @@ namespace GameStore.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<GameForResultDto> AddGameAsync(GameForCreationDto game)
-        {
-            if (game == null)
-            {
-                throw new ArgumentNullException(nameof(game), "Game cannot be null.");
-            }
-
-            var resultGame = new Game
-            {
-                Id = Guid.NewGuid(),
-                Name = game.Name,
-                Description = game.Description,
-                Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key,
-                GameGenres = game.GenreIds.Select(id => new GameGenre { GenreId = id }).ToList(),
-                GamePlatforms = game.PlatformIds.Select(id => new GamePlatform { PlatformId = id }).ToList(),
-            };
-
-            await this.unitOfWork.Games.AddAsync(resultGame);
-            await this.unitOfWork.SaveChangesAsync();
-            return this.mapper.Map<GameForResultDto>(resultGame);
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> DeleteGameAsync(Guid id)
-        {
-            var game = await this.unitOfWork.Games.GetFullGameByIdAsync(id);
-            if (game is null)
-            {
-                return false;
-            }
-
-            this.unitOfWork.Games.Delete(game);
-            await this.unitOfWork.SaveChangesAsync();
-            return true;
-        }
-
-        /// <inheritdoc/>
         public Task<byte[]> GenerateGameFileAsync(string key)
         {
             throw new NotImplementedException();
@@ -119,11 +82,37 @@ namespace GameStore.Application.Services
         }
 
         /// <inheritdoc/>
+        public async Task<GameForResultDto> AddGameAsync(GameForCreationDto game)
+        {
+            ValidateGame(game);
+
+            var resultGame = MapToGameEntity(game);
+
+            await this.unitOfWork.Games.AddAsync(resultGame);
+            await this.unitOfWork.SaveChangesAsync();
+            return this.mapper.Map<GameForResultDto>(resultGame);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteGameAsync(Guid id)
+        {
+            var game = await this.unitOfWork.Games.GetFullGameByIdAsync(id);
+            if (game is null)
+            {
+                return false;
+            }
+
+            this.unitOfWork.Games.Delete(game);
+            await this.unitOfWork.SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> UpdateGameAsync(GameForUpdateDto game)
         {
             var existingGame = await this.ValidateAndGetGameAsync(game.Id);
 
-            this.ApplyGameUpdates(existingGame, game);
+            ApplyGameUpdates(existingGame, game);
 
             var result = await this.unitOfWork.SaveChangesAsync();
             return result > 0;
@@ -140,6 +129,57 @@ namespace GameStore.Application.Services
         }
 
         /// <summary>
+        /// Map to game entity given creation dto.
+        /// </summary>
+        /// <param name="game">Game creation dto.</param>
+        /// <returns>Game entity.</returns>
+        private static Game MapToGameEntity(GameForCreationDto game)
+        {
+            return new Game
+            {
+                Id = Guid.NewGuid(),
+                Name = game.Name,
+                Description = game.Description,
+                Key = string.IsNullOrWhiteSpace(game.Key)
+                    ? GenerateKeyFromName(game.Name ?? string.Empty)
+                    : game.Key,
+                GameGenres = game.GenreIds.Select(id => new GameGenre { GenreId = id }).ToList(),
+                GamePlatforms = game.PlatformIds.Select(id => new GamePlatform { PlatformId = id }).ToList(),
+            };
+        }
+
+        /// <summary>
+        /// Validate game creation dto.
+        /// </summary>
+        /// <param name="game">Game creation dto.</param>
+        private static void ValidateGame(GameForCreationDto game)
+        {
+            if (game == null)
+            {
+                throw new ArgumentNullException(nameof(game), "Game cannot be null.");
+            }
+        }
+
+        /// <summary>
+        /// Applying game updated.
+        /// </summary>
+        /// <param name="existingGame">Game model.</param>
+        /// <param name="game">GameForUpdate DTO.</param>
+        private static void ApplyGameUpdates(Game existingGame, GameForUpdateDto game)
+        {
+            existingGame.Name = game.Name;
+            existingGame.Description = game.Description;
+            existingGame.Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key;
+            existingGame.GameGenres = game.GenreIds
+               .Select(id => new GameGenre { GameId = game.Id, GenreId = id })
+               .ToList();
+
+            existingGame.GamePlatforms = game.PlatformIds
+                .Select(id => new GamePlatform { GameId = game.Id, PlatformId = id })
+                .ToList();
+        }
+
+        /// <summary>
         /// Validate game with given id.
         /// </summary>
         /// <param name="gameId">Game id.</param>
@@ -153,25 +193,6 @@ namespace GameStore.Application.Services
             }
 
             return game;
-        }
-
-        /// <summary>
-        /// Applying game updated.
-        /// </summary>
-        /// <param name="existingGame">Game model.</param>
-        /// <param name="game">GameForUpdate DTO.</param>
-        private void ApplyGameUpdates(Game existingGame, GameForUpdateDto game)
-        {
-            existingGame.Name = game.Name;
-            existingGame.Description = game.Description;
-            existingGame.Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key;
-            existingGame.GameGenres = game.GenreIds
-               .Select(id => new GameGenre { GameId = game.Id, GenreId = id })
-               .ToList();
-
-            existingGame.GamePlatforms = game.PlatformIds
-                .Select(id => new GamePlatform { GameId = game.Id, PlatformId = id })
-                .ToList();
         }
     }
 }
