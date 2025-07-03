@@ -30,11 +30,11 @@ namespace GameStore.Application.DTOs.Games
         /// <summary>
         /// Gets or sets the list of genre IDs associated with the game.
         /// </summary>
-        public List<Guid> GenreIds { get; set; } = new();
+        public List<Guid> GenreIds { get; set; } = new List<Guid>();
 
         /// <summary>
         /// Gets or sets the list of platform IDs associated with the game.
         /// </summary>
-        public List<Guid> PlatformIds { get; set; } = new();
+        public List<Guid> PlatformIds { get; set; } = new List<Guid>();
     }
 }

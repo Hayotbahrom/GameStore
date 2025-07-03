@@ -63,11 +63,9 @@
                 <td>
                     <a asp-action="Details" asp-route-id="@game.Id" class="btn btn-link">Details</a> |
                     <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-warning">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@game.Id"
-                        class="btn btn-danger" 
-                        onclick="return confirm('Are you sure you want to delete this game?')">
-                        Delete
-                    </a>
+                    <form method="post" asp-action="Delete" asp-route-id="@game.Id" onsubmit="return confirm('Are you sure?')">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
                 <td>
                     <a asp-action="Download" asp-route-id="@game.Id" class="btn btn-sm btn-success">Download</a>

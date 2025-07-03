@@ -121,22 +121,9 @@ namespace GameStore.Application.Services
         /// <inheritdoc/>
         public async Task<bool> UpdateGameAsync(GameForUpdateDto game)
         {
-            var existingGame = await this.unitOfWork.Games.GetFullGameByIdAsync(game.Id);
-            if (existingGame == null)
-            {
-                throw new ArgumentException($"Game with ID {game.Id} does not exist.", nameof(game));
-            }
+            var existingGame = await this.ValidateAndGetGameAsync(game.Id);
 
-            existingGame.Name = game.Name;
-            existingGame.Description = game.Description;
-            existingGame.Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key;
-            existingGame.GameGenres = game.GenreIds
-               .Select(id => new GameGenre { GameId = game.Id, GenreId = id })
-               .ToList();
-
-            existingGame.GamePlatforms = game.PlatformIds
-                .Select(id => new GamePlatform { GameId = game.Id, PlatformId = id })
-                .ToList();
+            this.ApplyGameUpdates(existingGame, game);
 
             var result = await this.unitOfWork.SaveChangesAsync();
             return result > 0;
@@ -150,6 +137,41 @@ namespace GameStore.Application.Services
         private static string GenerateKeyFromName(string name)
         {
             return name.Trim().Replace(" ", "_").ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Validate game with given id.
+        /// </summary>
+        /// <param name="gameId">Game id.</param>
+        /// <returns>Game model.</returns>
+        private async Task<Game> ValidateAndGetGameAsync(Guid gameId)
+        {
+            var game = await this.unitOfWork.Games.GetFullGameByIdAsync(gameId);
+            if (game is null)
+            {
+                throw new ArgumentException($"Game with ID {gameId} does not exist.");
+            }
+
+            return game;
+        }
+
+        /// <summary>
+        /// Applying game updated.
+        /// </summary>
+        /// <param name="existingGame">Game model.</param>
+        /// <param name="game">GameForUpdate DTO.</param>
+        private void ApplyGameUpdates(Game existingGame, GameForUpdateDto game)
+        {
+            existingGame.Name = game.Name;
+            existingGame.Description = game.Description;
+            existingGame.Key = string.IsNullOrWhiteSpace(game.Key) ? GenerateKeyFromName(game.Name ?? string.Empty) : game.Key;
+            existingGame.GameGenres = game.GenreIds
+               .Select(id => new GameGenre { GameId = game.Id, GenreId = id })
+               .ToList();
+
+            existingGame.GamePlatforms = game.PlatformIds
+                .Select(id => new GamePlatform { GameId = game.Id, PlatformId = id })
+                .ToList();
         }
     }
 }

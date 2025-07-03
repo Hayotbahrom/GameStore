@@ -49,15 +49,11 @@ namespace GameStore.Application.Services
         /// <inheritdoc/>
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var existingGenre = await this.unitOfWork.Genres.FindByIdAsync(id);
-            if (existingGenre == null)
-            {
-                return false; // Genre not found
-            }
+            var existingGenre = await this.ValidateGenreAsync(id);
 
             this.unitOfWork.Genres.Delete(existingGenre);
             await this.unitOfWork.SaveChangesAsync();
-            return true; // Deletion successful
+            return true;
         }
 
         /// <inheritdoc/>
@@ -107,11 +103,7 @@ namespace GameStore.Application.Services
         /// <inheritdoc/>
         public async Task<bool> UpdateAsync(GenreForUpdateDto dto)
         {
-            var existingGenre = await this.unitOfWork.Genres.FindByIdAsync(dto.Id);
-            if (existingGenre == null)
-            {
-                return false; // Genre not found
-            }
+            var existingGenre = await this.ValidateGenreAsync(dto.Id);
 
             existingGenre.Name = dto.Name;
             existingGenre.ParentGenreId = dto.ParentGenreId;
@@ -127,6 +119,22 @@ namespace GameStore.Application.Services
             return genres
                 .Where(g => gameNames.Contains(g.Name))
                 .Select(g => g.Id);
+        }
+
+        /// <summary>
+        /// Validate genre with given id.
+        /// </summary>
+        /// <param name="genreId">Genre id.</param>
+        /// <returns>Genre model.</returns>
+        private async Task<Genre> ValidateGenreAsync(Guid genreId)
+        {
+            var genre = await this.unitOfWork.Genres.FindByIdAsync(genreId);
+            if (genre == null)
+            {
+                throw new ArgumentException($"Game with ID {genreId} does not exist.");
+            }
+
+            return genre;
         }
     }
 }

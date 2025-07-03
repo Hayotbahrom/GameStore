@@ -23,9 +23,9 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@platform.Id" class="btn btn-warning">Edit</a> |
                     <a asp-action="Details" asp-route-id="@platform.Id" class="btn btn-link">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@platform.Id" class=" btn btn-danger" onclick="return confirm('Are you sure you want to delete this platform?')">
-                        Delete
-                    </a>
+                    <form method="post" asp-action="Delete" asp-route-id="@platform.Id" onsubmit="return confirm('Are you sure?')">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
                 <td>
                     <a asp-action="GetGamesByPlatform" asp-route-id="@platform.Id" class="btn btn-outline-primary btn-sm">View Games</a>
