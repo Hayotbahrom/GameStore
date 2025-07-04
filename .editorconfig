@@ -2,17 +2,11 @@
 
 # New Rule Set
 # Description:  
-root = true
-
-[*.cs]
-dotnet_diagnostic.SA0001.severity = none
 
 # Code files
 [*.{cs,vb}]
 
 dotnet_diagnostic.IDE0028.severity = none
-
-dotnet_diagnostic.SA1636.severity = none
 
 dotnet_diagnostic.ASP0001.severity = none
 
