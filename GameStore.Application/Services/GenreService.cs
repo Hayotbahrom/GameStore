@@ -3,6 +3,7 @@
 // </copyright>
 using AutoMapper;
 using GameStore.Application.DTOs.Genres;
+using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
@@ -39,8 +40,8 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
         var existingGenre = await ValidateGenreAsync(id);
 
         _unitOfWork.Genres.Delete(existingGenre);
-        await _unitOfWork.SaveChangesAsync();
-        return true;
+        var result = await _unitOfWork.SaveChangesAsync();
+        return result > 0;
     }
 
     /// <inheritdoc/>
@@ -64,7 +65,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     /// <inheritdoc/>
     public async Task<GenreForResultDto?> GetByIdAsync(Guid id)
     {
-        var genre = await _unitOfWork.Genres.FindByIdAsync(id);
+        var genre = await ValidateGenreAsync(id);
         return _mapper.Map<GenreForResultDto>(genre);
     }
 
@@ -111,6 +112,6 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private async Task<Genre> ValidateGenreAsync(Guid genreId)
     {
         var genre = await _unitOfWork.Genres.FindByIdAsync(genreId);
-        return genre ?? throw new ArgumentException($"Game with ID {genreId} does not exist.");
+        return genre ?? throw new CustomException(404, $"Game with ID {genreId} does not exist.");
     }
 }

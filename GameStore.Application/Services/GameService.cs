@@ -4,6 +4,7 @@
 
 using AutoMapper;
 using GameStore.Application.DTOs.Games;
+using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
@@ -56,7 +57,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// <inheritdoc/>
     public async Task<GameForResultDto> GetByIdAsync(Guid id)
     {
-        var game = await _unitOfWork.Games.GetFullGameByIdAsync(id);
+        var game = await ValidateAndGetGameAsync(id);
         return _mapper.Map<GameForResultDto>(game);
     }
 
@@ -64,7 +65,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<GameForResultDto> GetByKeyAsync(string key)
     {
         var game = await _unitOfWork.Games.GetByKeyAsync(key);
-        return _mapper.Map<GameForResultDto>(game);
+        return _mapper.Map<GameForResultDto>(game) ?? throw new CustomException(404, "Game is not found");
     }
 
     /// <inheritdoc/>
@@ -82,7 +83,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// <inheritdoc/>
     public async Task<bool> DeleteGameAsync(Guid id)
     {
-        var game = await _unitOfWork.Games.GetFullGameByIdAsync(id);
+        var game = await ValidateAndGetGameAsync(id);
         if (game is null)
         {
             return false;
@@ -173,6 +174,6 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     private async Task<Game> ValidateAndGetGameAsync(Guid gameId)
     {
         var game = await _unitOfWork.Games.GetFullGameByIdAsync(gameId);
-        return game ?? throw new ArgumentException($"Game with ID {gameId} does not exist.");
+        return game ?? throw new CustomException(404, "Game is not found.");
     }
 }

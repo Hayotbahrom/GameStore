@@ -3,6 +3,7 @@
 // </copyright>
 using AutoMapper;
 using GameStore.Application.DTOs.Platforms;
+using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
@@ -35,15 +36,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     /// <inheritdoc />
     public async Task<bool> DeletePlatformAsync(Guid id)
     {
-        var platform = await _unitOfWork.Platforms.FindByIdAsync(id);
-        if (platform == null)
-        {
-            return false;
-        }
+        var platform = await ValidatePlatformExistAsync(id);
 
         _unitOfWork.Platforms.Delete(platform);
-        await _unitOfWork.SaveChangesAsync();
-        return true;
+        var result = await _unitOfWork.SaveChangesAsync();
+        return result > 0;
     }
 
     /// <inheritdoc />
@@ -63,22 +60,18 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     /// <inheritdoc />
     public async Task<PlatformForResultDto?> GetPlatformByIdAsync(Guid id)
     {
-        var platform = await _unitOfWork.Platforms.FindByIdAsync(id);
+        var platform = await ValidatePlatformExistAsync(id);
         return platform == null ? null : _mapper.Map<PlatformForResultDto>(platform);
     }
 
     /// <inheritdoc />
     public async Task<bool> UpdatePlatformAsync(PlatformForUpdateDto dto)
     {
-        var existingPlatform = await _unitOfWork.Platforms.FindByIdAsync(dto.Id);
-        if (existingPlatform == null)
-        {
-            return false;
-        }
+        var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
         existingPlatform.Type = dto.Type;
-        await _unitOfWork.SaveChangesAsync();
-        return true;
+        var result = await _unitOfWork.SaveChangesAsync();
+        return result > 0;
     }
 
     /// <inheritdoc />
@@ -88,5 +81,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
         return platforms
             .Where(p => gameNames.Contains(p.Type))
             .Select(p => p.Id);
+    }
+
+    private async Task<Platform> ValidatePlatformExistAsync(Guid platformId)
+    {
+        var platform = await _unitOfWork.Platforms.FindByIdAsync(platformId);
+        return platform ?? throw new CustomException(404, "Platform is not found");
     }
 }
