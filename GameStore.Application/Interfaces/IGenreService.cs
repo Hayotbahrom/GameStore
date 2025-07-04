@@ -64,11 +64,4 @@ public interface IGenreService
     /// <param name="gameNames">List of game names.</param>
     /// <returns>List of genre ids.</returns>
     Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames);
-
-    /// <summary>
-    /// Gets a GenreForUpdateDto by its ID.
-    /// </summary>
-    /// <param name="id">Genre id.</param>
-    /// <returns>GenreForUpdate Dto.</returns>
-    Task<GenreForUpdateDto?> GenreForUpdateDtoAsync(Guid id);
 }

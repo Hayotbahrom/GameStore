@@ -70,13 +70,6 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     }
 
     /// <inheritdoc/>
-    public async Task<GenreForUpdateDto?> GenreForUpdateDtoAsync(Guid id)
-    {
-        var genre = await _unitOfWork.Genres.FindByIdAsync(id);
-        return genre == null ? null : _mapper.Map<GenreForUpdateDto>(genre);
-    }
-
-    /// <inheritdoc/>
     public async Task<IEnumerable<GenreForResultDto>> GetByParentIdAsync(Guid parentId)
     {
         var genres = await _unitOfWork.Genres.GetByParentIdAsync(parentId);

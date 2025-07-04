@@ -18,6 +18,10 @@ public class GenresController(IGenreService genreService) : ControllerBase
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _genreService.GetAllAsync());
 
+    [HttpGet("subgenres/{id}")]
+    public async Task<IActionResult> GetSubGenresIdAsync(Guid id)
+        => Ok(await _genreService.GetByParentIdAsync(id));
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
         => Ok(await _genreService.GetByIdAsync(id));
