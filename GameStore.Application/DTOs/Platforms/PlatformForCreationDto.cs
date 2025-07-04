@@ -1,19 +1,18 @@
 ﻿// <copyright file="PlatformForCreationDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-namespace GameStore.Application.DTOs.Platforms
-{
-    using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
+namespace GameStore.Application.DTOs.Platforms;
+
+/// <summary>
+/// Represents of platform for creation DTO.
+/// </summary>
+public class PlatformForCreationDto
+{
     /// <summary>
-    /// Represents of platform for creation DTO.
+    /// Gets or sets the type of platform.
     /// </summary>
-    public class PlatformForCreationDto
-    {
-        /// <summary>
-        /// Gets or sets the type of platform.
-        /// </summary>
-        [Required]
-        public string? Type { get; set; }
-    }
+    [Required]
+    public string? Type { get; set; }
 }

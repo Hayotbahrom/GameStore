@@ -1,34 +1,31 @@
 ﻿// <copyright file="IUnitOfWork.cs" company="GameStore">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-namespace GameStore.Infrastructure.IRepositories
+namespace GameStore.Infrastructure.IRepositories;
+
+/// <summary>
+/// Represents a unit of work interface for the Game Store application.
+/// </summary>
+public interface IUnitOfWork
 {
-    using System.Threading.Tasks;
+    /// <summary>
+    /// Gets the repository for managing games.
+    /// </summary>
+    IGameRepository Games { get; }
 
     /// <summary>
-    /// Represents a unit of work interface for the Game Store application.
+    /// Gets the repository for managing platforms.
     /// </summary>
-    public interface IUnitOfWork
-    {
-        /// <summary>
-        /// Gets the repository for managing games.
-        /// </summary>
-        IGameRepository Games { get; }
+    IPlatformRepository Platforms { get; }
 
-        /// <summary>
-        /// Gets the repository for managing platforms.
-        /// </summary>
-        IPlatformRepository Platforms { get; }
+    /// <summary>
+    /// Gets the repository for managing genres.
+    /// </summary>
+    IGenreRepository Genres { get; }
 
-        /// <summary>
-        /// Gets the repository for managing genres.
-        /// </summary>
-        IGenreRepository Genres { get; }
-
-        /// <summary>
-        /// Asynchronously saves changes to the database.
-        /// </summary>
-        /// <returns>An integer representing the number of state entries written to database. </returns>
-        Task<int> SaveChangesAsync();
-    }
+    /// <summary>
+    /// Asynchronously saves changes to the database.
+    /// </summary>
+    /// <returns>An integer representing the number of state entries written to database. </returns>
+    Task<int> SaveChangesAsync();
 }
