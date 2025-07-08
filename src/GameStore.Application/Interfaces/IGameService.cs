@@ -35,35 +35,35 @@ public interface IGameService
     /// </summary>
     /// <param name="genreId">The identifier of the genre.</param>
     /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetByGenreAsync(Guid genreId);
+    Task<IEnumerable<GameResultDto>> GetByGenreIdAsync(Guid genreId);
 
     /// <summary>
     /// Gets all game associated with given platform ID asynchronously.
     /// </summary>
     /// <param name="platformId">The identifier of the platform.</param>
     /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetByPlatformAsync(Guid platformId);
+    Task<IEnumerable<GameResultDto>> GetByPlatformIdAsync(Guid platformId);
 
     /// <summary>
     /// Adds a new game asynchronously.
     /// </summary>
     /// <param name="game">The game to add.</param>
     /// <returns>A created game.</returns>
-    Task<GameResultDto> AddGameAsync(GameCreationDto game);
+    Task<GameResultDto> AddAsync(GameCreationDto game);
 
     /// <summary>
     /// Updates an existing game asynchronously.
     /// </summary>
     /// <param name="game">The game to update.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task<bool> UpdateGameAsync(GameUpdateDto game);
+    Task<bool> UpdateAsync(GameUpdateDto game);
 
     /// <summary>
     /// Deletes a game by its identifier asynchronously.
     /// </summary>
     /// <param name="id">The identifier of the game to delete.</param>
     /// <returns>The task result is true if the game was deleted, otherwise false.</returns>
-    Task<bool> DeleteGameAsync(Guid id);
+    Task<bool> DeleteAsync(Guid id);
 
     /// <summary>
     ///  Generates a downloadable text file containing serialized game data by its key asynchronously.

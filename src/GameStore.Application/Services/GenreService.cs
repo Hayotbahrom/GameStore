@@ -88,15 +88,6 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
         return true;
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames)
-    {
-        var genres = await _unitOfWork.Genres.GetAll().ToListAsync();
-        return genres
-            .Where(g => gameNames.Contains(g.Name))
-            .Select(g => g.Id);
-    }
-
     /// <summary>
     /// Validate genre with given id.
     /// </summary>

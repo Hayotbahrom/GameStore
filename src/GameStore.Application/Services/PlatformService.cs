@@ -20,7 +20,7 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc />
-    public async Task<PlatformResultDto> CreatePlatformAsync(PlatformCreationDto dto)
+    public async Task<PlatformResultDto> CreateAsync(PlatformCreationDto dto)
     {
         var platform = new Platform
         {
@@ -34,17 +34,17 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     }
 
     /// <inheritdoc />
-    public async Task<bool> DeletePlatformAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var platform = await ValidatePlatformExistAsync(id);
 
         _unitOfWork.Platforms.Delete(platform);
-        var result = await _unitOfWork.SaveChangesAsync();
-        return result > 0;
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PlatformResultDto>> GetAllPlatformsAsync()
+    public async Task<IEnumerable<PlatformResultDto>> GetAllAsync()
     {
         var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
@@ -58,29 +58,20 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     }
 
     /// <inheritdoc />
-    public async Task<PlatformResultDto?> GetPlatformByIdAsync(Guid id)
+    public async Task<PlatformResultDto?> GetByIdAsync(Guid id)
     {
         var platform = await ValidatePlatformExistAsync(id);
         return _mapper.Map<PlatformResultDto>(platform);
     }
 
     /// <inheritdoc />
-    public async Task<bool> UpdatePlatformAsync(PlatformUpdateDto dto)
+    public async Task<bool> UpdateAsync(PlatformUpdateDto dto)
     {
         var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
         existingPlatform.Type = dto.Type;
         var result = await _unitOfWork.SaveChangesAsync();
         return result > 0;
-    }
-
-    /// <inheritdoc />
-    public async Task<IEnumerable<Guid>> GetPlatformIdsByGameNamesAsync(IEnumerable<string> gameNames)
-    {
-        var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
-        return platforms
-            .Where(p => gameNames.Contains(p.Type))
-            .Select(p => p.Id);
     }
 
     private async Task<Platform> ValidatePlatformExistAsync(Guid platformId)

@@ -12,7 +12,7 @@ public class GamesController(IGameService gameService) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> PostAsync(GameCreationDto dto)
-        => Ok(await _gameService.AddGameAsync(dto));
+        => Ok(await _gameService.AddAsync(dto));
 
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
@@ -28,17 +28,33 @@ public class GamesController(IGameService gameService) : ControllerBase
 
     [HttpPut]
     public async Task<IActionResult> PutAsync(GameUpdateDto dto)
-        => Ok(await _gameService.UpdateGameAsync(dto));
+        => Ok(await _gameService.UpdateAsync(dto));
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
-        => Ok(await _gameService.DeleteGameAsync(id));
+        => Ok(await _gameService.DeleteAsync(id));
 
     [HttpGet("by-genre/{genreId}")]
-    public async Task<IActionResult> GetByGenreAsync(Guid genreId)
-    => Ok(await _gameService.GetByGenreAsync(genreId));
+    public async Task<IActionResult> GetByGenreIdAsync(Guid genreId)
+    => Ok(await _gameService.GetByGenreIdAsync(genreId));
 
     [HttpGet("by-platform/{platformId}")]
-    public async Task<IActionResult> GetByPlatformAsync(Guid platformId)
-        => Ok(await _gameService.GetByPlatformAsync(platformId));
+    public async Task<IActionResult> GetByPlatformIdAsync(Guid platformId)
+        => Ok(await _gameService.GetByPlatformIdAsync(platformId));
+
+    [HttpGet("{key}/download")]
+    public async Task<IActionResult> DownloadGameFile(string key)
+    {
+        try
+        {
+            var fileBytes = await _gameService.GenerateGameFileAsync(key);
+            var fileName = $"_{key}.txt";
+
+            return File(fileBytes, "text/plain", fileName);
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

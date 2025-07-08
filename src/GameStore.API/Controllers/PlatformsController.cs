@@ -11,21 +11,21 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
 
     [HttpPost]
     public async Task<IActionResult> PostAsync(PlatformCreationDto dto)
-        => Ok(await _platformService.CreatePlatformAsync(dto));
+        => Ok(await _platformService.CreateAsync(dto));
 
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
-        => Ok(await _platformService.GetAllPlatformsAsync());
+        => Ok(await _platformService.GetAllAsync());
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync(Guid id)
-        => Ok(await _platformService.GetPlatformByIdAsync(id));
+        => Ok(await _platformService.GetByIdAsync(id));
 
     [HttpPut]
     public async Task<IActionResult> PutAsync(PlatformUpdateDto dto)
-        => Ok(await _platformService.UpdatePlatformAsync(dto));
+        => Ok(await _platformService.UpdateAsync(dto));
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
-        => Ok(await _platformService.DeletePlatformAsync(id));
+        => Ok(await _platformService.DeleteAsync(id));
 }

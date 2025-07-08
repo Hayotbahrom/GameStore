@@ -2,6 +2,9 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using GameStore.Application.DTOs.Games;
 using GameStore.Application.Exceptions;
@@ -26,11 +29,28 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// The mapper for mapping between domain entities and DTOs.
     /// </summary>
     private readonly IMapper _mapper = mapper;
+    private static readonly JsonSerializerOptions? _jsonOptions = new()
+    {
+        WriteIndented = true,
+        ReferenceHandler = ReferenceHandler.Preserve,
+    };
 
     /// <inheritdoc/>
-    public Task<byte[]> GenerateGameFileAsync(string key)
+    public async Task<byte[]> GenerateGameFileAsync(string key)
     {
-        throw new NotImplementedException();
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
+        if (game == null)
+        {
+            return null;
+        }
+
+        var gameDto = _mapper.Map<GameResultDto>(game);
+
+        var serializedGame = JsonSerializer.Serialize(gameDto, _jsonOptions);
+
+        var fileContent = Encoding.UTF8.GetBytes(serializedGame);
+
+        return fileContent;
     }
 
     /// <inheritdoc/>
@@ -41,16 +61,16 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetByGenreAsync(Guid genreId)
+    public async Task<IEnumerable<GameResultDto>> GetByGenreIdAsync(Guid genreId)
     {
-        var games = await _unitOfWork.Games.GetByGenreAsync(genreId);
+        var games = await _unitOfWork.Games.GetByGenreIdAsync(genreId);
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetByPlatformAsync(Guid platformId)
+    public async Task<IEnumerable<GameResultDto>> GetByPlatformIdAsync(Guid platformId)
     {
-        var games = await _unitOfWork.Games.GetByPlatformAsync(platformId);
+        var games = await _unitOfWork.Games.GetByPlatformIdAsync(platformId);
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
@@ -69,7 +89,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<GameResultDto> AddGameAsync(GameCreationDto game)
+    public async Task<GameResultDto> AddAsync(GameCreationDto game)
     {
         ValidateGame(game);
 
@@ -81,7 +101,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteGameAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var game = await ValidateAndGetGameAsync(id);
         if (game is null)
@@ -95,14 +115,14 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateGameAsync(GameUpdateDto game)
+    public async Task<bool> UpdateAsync(GameUpdateDto game)
     {
         var existingGame = await ValidateAndGetGameAsync(game.Id);
 
         ApplyGameUpdates(existingGame, game);
 
-        var result = await _unitOfWork.SaveChangesAsync();
-        return result > 0;
+        await _unitOfWork.SaveChangesAsync();
+        return true;
     }
 
     /// <summary>

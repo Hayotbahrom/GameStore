@@ -14,14 +14,14 @@ public interface IPlatformService
     /// Gets all platforms.
     /// </summary>
     /// <returns>A list of platforms.</returns>
-    Task<IEnumerable<PlatformResultDto>> GetAllPlatformsAsync();
+    Task<IEnumerable<PlatformResultDto>> GetAllAsync();
 
     /// <summary>
     /// Gets a platform by its ID.
     /// </summary>
     /// <param name="id">The unique identifier of the platform.</param>
     /// <returns>The platform with the specified ID.</returns>
-    Task<PlatformResultDto?> GetPlatformByIdAsync(Guid id);
+    Task<PlatformResultDto?> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Gets platforms associated with a specific game by its key.
@@ -35,26 +35,19 @@ public interface IPlatformService
     /// </summary>
     /// <param name="dto">The platform to create.</param>
     /// <returns>The created platform.</returns>
-    Task<PlatformResultDto> CreatePlatformAsync(PlatformCreationDto dto);
+    Task<PlatformResultDto> CreateAsync(PlatformCreationDto dto);
 
     /// <summary>
     /// Updates an existing platform.
     /// </summary>
     /// <param name="dto">The platform to update.</param>
     /// <returns>If successully updated, return true, else false.</returns>
-    Task<bool> UpdatePlatformAsync(PlatformUpdateDto dto);
+    Task<bool> UpdateAsync(PlatformUpdateDto dto);
 
     /// <summary>
     /// Deletes a platform by its ID.
     /// </summary>
     /// <param name="id">The unique identifier of the platform to delete.</param>
     /// <returns>If successully deleted, return true, else false.</returns>
-    Task<bool> DeletePlatformAsync(Guid id);
-
-    /// <summary>
-    /// Gets platform IDs by game names.
-    /// </summary>
-    /// <param name="gameNames">List of game names.</param>
-    /// <returns>List of platform IDs.</returns>
-    Task<IEnumerable<Guid>> GetPlatformIdsByGameNamesAsync(IEnumerable<string> gameNames);
+    Task<bool> DeleteAsync(Guid id);
 }

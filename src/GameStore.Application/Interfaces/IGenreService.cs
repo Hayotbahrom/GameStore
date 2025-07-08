@@ -57,11 +57,4 @@ public interface IGenreService
     /// <param name="id">Genre id.</param>
     /// <returns>bool.</returns>
     Task<bool> DeleteAsync(Guid id);
-
-    /// <summary>
-    /// Gets genre IDs associated with specific game names.
-    /// </summary>
-    /// <param name="gameNames">List of game names.</param>
-    /// <returns>List of genre ids.</returns>
-    Task<IEnumerable<Guid>> GetGenreIdsByGameNamesAsync(IEnumerable<string> gameNames);
 }
