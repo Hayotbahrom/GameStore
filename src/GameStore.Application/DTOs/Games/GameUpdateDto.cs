@@ -1,4 +1,4 @@
-﻿// <copyright file="GameForUpdateDto.cs" company="PlaceholderCompany">
+﻿// <copyright file="GameUpdateDto.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 namespace GameStore.Application.DTOs.Games;

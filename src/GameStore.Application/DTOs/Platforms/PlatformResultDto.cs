@@ -1,4 +1,4 @@
-﻿// <copyright file="PlatformForResultDto.cs" company="Epam">
+﻿// <copyright file="PlatformResultDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using System.ComponentModel.DataAnnotations;

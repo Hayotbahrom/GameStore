@@ -1,4 +1,4 @@
-﻿// <copyright file="GameForCreationDto.cs" company="PlaceholderCompany">
+﻿// <copyright file="GameCreationDto.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using System.ComponentModel.DataAnnotations;

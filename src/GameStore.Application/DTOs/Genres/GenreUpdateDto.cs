@@ -1,4 +1,4 @@
-﻿// <copyright file="GenreForUpdateDto.cs" company="Epam">
+﻿// <copyright file="GenreUpdateDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using System.ComponentModel.DataAnnotations;

@@ -1,4 +1,4 @@
-﻿// <copyright file="GenreForResultDto.cs" company="Epam">
+﻿// <copyright file="GenreResultDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
