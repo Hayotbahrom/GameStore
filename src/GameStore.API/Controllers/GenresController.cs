@@ -11,15 +11,15 @@ public class GenresController(IGenreService genreService) : ControllerBase
     private readonly IGenreService _genreService = genreService;
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync(GenreCreationDto dto)
+    public async Task<IActionResult> CreateAsync(GenreCreationDto dto)
         => Ok(await _genreService.AddAsync(dto));
 
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _genreService.GetAllAsync());
 
-    [HttpGet("subgenres/{id}")]
-    public async Task<IActionResult> GetSubGenresIdAsync(Guid id)
+    [HttpGet("{id}/genres")]
+    public async Task<IActionResult> GetGenresByParentIdAsync(Guid id)
         => Ok(await _genreService.GetByParentIdAsync(id));
 
     [HttpGet("{id}")]
@@ -34,7 +34,7 @@ public class GenresController(IGenreService genreService) : ControllerBase
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _genreService.DeleteAsync(id));
 
-    [HttpGet("by-genre/{genreId}")]
+    [HttpGet("/{genreId}/games")]
     public async Task<IActionResult> GetGamesByGenreIdAsync(Guid genreId)
     => Ok(await _genreService.GetGamesByGenreIdAsync(genreId));
 }

@@ -10,7 +10,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     private readonly IPlatformService _platformService = platformService;
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync(PlatformCreationDto dto)
+    public async Task<IActionResult> CreateAsync(PlatformCreationDto dto)
         => Ok(await _platformService.CreateAsync(dto));
 
     [HttpGet]
@@ -22,14 +22,14 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
         => Ok(await _platformService.GetByIdAsync(id));
 
     [HttpPut]
-    public async Task<IActionResult> PutAsync(PlatformUpdateDto dto)
+    public async Task<IActionResult> UpdateAsync(PlatformUpdateDto dto)
         => Ok(await _platformService.UpdateAsync(dto));
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _platformService.DeleteAsync(id));
 
-    [HttpGet("by-platform/{platformId}")]
+    [HttpGet("{platformId}/games")]
     public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid platformId)
         => Ok(await _platformService.GetGamesByPlatformIdAsync(platformId));
 }
