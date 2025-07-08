@@ -63,6 +63,12 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         var resultGame = MapToGameEntity(game);
 
+        var existingGame = await _unitOfWork.Games.GetByKeyAsync(resultGame.Key!);
+        if (existingGame != null)
+        {
+            throw new CustomException(409, $"Game key '{game.Key}' already exists.");
+        }
+
         await _unitOfWork.Games.AddAsync(resultGame);
         await _unitOfWork.SaveChangesAsync();
         return _mapper.Map<GameResultDto>(resultGame);
@@ -146,31 +152,31 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     {
         if (game == null)
         {
-            throw new ArgumentNullException(nameof(game), "Game cannot be null.");
+            throw new CustomException(400, "Game cannot be null.");
         }
 
         if (game.GenreIds == null || game.GenreIds.Count == 0)
         {
-            throw new ArgumentException("At least one genre must be specified.");
+            throw new CustomException(400, "At least one genre must be provided.");
         }
 
         if (game.PlatformIds == null || game.PlatformIds.Count == 0)
         {
-            throw new ArgumentException("At least one platform must be specified.");
+            throw new CustomException(400, "At least one platform must be provided.");
         }
 
         var existingGenreIds = await _unitOfWork.Genres.GetExistingIdsAsync(game.GenreIds);
         var missingGenreIds = game.GenreIds.Except(existingGenreIds).ToList();
         if (missingGenreIds.Count != 0)
         {
-            throw new ArgumentException($"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
+            throw new CustomException(400, $"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
         }
 
         var existingPlatformIds = await _unitOfWork.Platforms.GetExistingIdsAsync(game.PlatformIds);
         var missingPlatformIds = game.PlatformIds.Except(existingPlatformIds).ToList();
         if (missingPlatformIds.Count != 0)
         {
-            throw new ArgumentException($"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
+            throw new CustomException(400, $"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
         }
     }
 

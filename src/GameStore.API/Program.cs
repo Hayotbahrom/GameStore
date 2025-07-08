@@ -1,4 +1,5 @@
 using GameStore.API.Extentions;
+using GameStore.API.Middlewares;
 using GameStore.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 
 app.UseResponseCaching();
 
