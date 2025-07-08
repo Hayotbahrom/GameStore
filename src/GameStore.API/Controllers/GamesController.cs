@@ -11,7 +11,7 @@ public class GamesController(IGameService gameService) : ControllerBase
     private readonly IGameService _gameService = gameService;
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync(GameCreationDto dto)
+    public async Task<IActionResult> CreateAsync(GameCreationDto dto)
         => Ok(await _gameService.AddAsync(dto));
 
     [HttpGet]
@@ -27,14 +27,14 @@ public class GamesController(IGameService gameService) : ControllerBase
         => Ok(await _gameService.GetByIdAsync(id));
 
     [HttpPut]
-    public async Task<IActionResult> PutAsync(GameUpdateDto dto)
+    public async Task<IActionResult> UpdateAsync(GameUpdateDto dto)
         => Ok(await _gameService.UpdateAsync(dto));
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
-        => Ok(await _gameService.DeleteAsync(id));
+    [HttpDelete("{key}")]
+    public async Task<IActionResult> DeleteAsync(string key)
+        => Ok(await _gameService.DeleteAsync(key));
 
-    [HttpGet("{key}/download")]
+    [HttpGet("{key}/file")]
     public async Task<IActionResult> DownloadGameFile(string key)
     {
         try

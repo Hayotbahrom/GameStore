@@ -47,9 +47,9 @@ public interface IGameService
     /// <summary>
     /// Deletes a game by its identifier asynchronously.
     /// </summary>
-    /// <param name="id">The identifier of the game to delete.</param>
+    /// <param name="key">The key of the game to delete.</param>
     /// <returns>The task result is true if the game was deleted, otherwise false.</returns>
-    Task<bool> DeleteAsync(Guid id);
+    Task<bool> DeleteAsync(string key);
 
     /// <summary>
     ///  Generates a downloadable text file containing serialized game data by its key asynchronously.

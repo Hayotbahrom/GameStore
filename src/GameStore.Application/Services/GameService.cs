@@ -87,15 +87,12 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(string key)
     {
-        var game = await ValidateAndGetGameAsync(id);
-        if (game is null)
-        {
-            return false;
-        }
+        var game = await _unitOfWork.Games.GetByKeyAsync(key) ?? throw new CustomException(404, "Game not found with given Key.");
 
         _unitOfWork.Games.Delete(game);
+
         await _unitOfWork.SaveChangesAsync();
         return true;
     }
