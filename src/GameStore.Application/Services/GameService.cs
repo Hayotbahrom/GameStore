@@ -36,24 +36,6 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     };
 
     /// <inheritdoc/>
-    public async Task<byte[]> GenerateGameFileAsync(string key)
-    {
-        var game = await _unitOfWork.Games.GetByKeyAsync(key);
-        if (game == null)
-        {
-            return null;
-        }
-
-        var gameDto = _mapper.Map<GameResultDto>(game);
-
-        var serializedGame = JsonSerializer.Serialize(gameDto, _jsonOptions);
-
-        var fileContent = Encoding.UTF8.GetBytes(serializedGame);
-
-        return fileContent;
-    }
-
-    /// <inheritdoc/>
     public async Task<IEnumerable<GameResultDto>> GetAllAsync()
     {
         var games = await _unitOfWork.Games.GetAll().ToListAsync();
@@ -77,7 +59,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// <inheritdoc/>
     public async Task<GameResultDto> AddAsync(GameCreationDto game)
     {
-        ValidateGame(game);
+        await ValidateGameAsync(game);
 
         var resultGame = MapToGameEntity(game);
 
@@ -106,6 +88,24 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         await _unitOfWork.SaveChangesAsync();
         return true;
+    }
+
+    /// <inheritdoc/>
+    public async Task<byte[]> GenerateGameFileAsync(string key)
+    {
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
+        if (game == null)
+        {
+            return null;
+        }
+
+        var gameDto = _mapper.Map<GameResultDto>(game);
+
+        var serializedGame = JsonSerializer.Serialize(gameDto, _jsonOptions);
+
+        var fileContent = Encoding.UTF8.GetBytes(serializedGame);
+
+        return fileContent;
     }
 
     /// <summary>
@@ -142,11 +142,35 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// Validate game creation dto.
     /// </summary>
     /// <param name="game">Game creation dto.</param>
-    private static void ValidateGame(GameCreationDto game)
+    private async Task ValidateGameAsync(GameCreationDto game)
     {
         if (game == null)
         {
             throw new ArgumentNullException(nameof(game), "Game cannot be null.");
+        }
+
+        if (game.GenreIds == null || game.GenreIds.Count == 0)
+        {
+            throw new ArgumentException("At least one genre must be specified.");
+        }
+
+        if (game.PlatformIds == null || game.PlatformIds.Count == 0)
+        {
+            throw new ArgumentException("At least one platform must be specified.");
+        }
+
+        var existingGenreIds = await _unitOfWork.Genres.GetExistingIdsAsync(game.GenreIds);
+        var missingGenreIds = game.GenreIds.Except(existingGenreIds).ToList();
+        if (missingGenreIds.Count != 0)
+        {
+            throw new ArgumentException($"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
+        }
+
+        var existingPlatformIds = await _unitOfWork.Platforms.GetExistingIdsAsync(game.PlatformIds);
+        var missingPlatformIds = game.PlatformIds.Except(existingPlatformIds).ToList();
+        if (missingPlatformIds.Count != 0)
+        {
+            throw new ArgumentException($"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
         }
     }
 

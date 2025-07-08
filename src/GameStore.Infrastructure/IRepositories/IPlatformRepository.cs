@@ -17,4 +17,11 @@ public interface IPlatformRepository : IRepository<Platform>
     /// <param name="gameKey">Game key.</param>
     /// <returns>List of platforms.</returns>
     Task<IEnumerable<Platform>> GetByGameKeyAsync(string gameKey);
+
+    /// <summary>
+    /// Gets existing platform ids.
+    /// </summary>
+    /// <param name="ids">List of platform ids.</param>
+    /// <returns>List of existing platform ids.</returns>
+    Task<List<Guid>> GetExistingIdsAsync(List<Guid> ids);
 }

@@ -28,4 +28,13 @@ public class PlatformRepository(GameStoreDbContext context) : Repository<Platfor
                 .Select(gp => gp.Platform!))
             .ToListAsync();
     }
+
+    /// <inheritdoc/>
+    public async Task<List<Guid>> GetExistingIdsAsync(List<Guid> ids)
+    {
+        return await Context.Genres
+            .Where(g => ids.Contains(g.Id))
+            .Select(g => g.Id)
+            .ToListAsync();
+    }
 }

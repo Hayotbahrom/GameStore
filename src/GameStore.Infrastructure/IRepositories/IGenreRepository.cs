@@ -24,4 +24,11 @@ public interface IGenreRepository : IRepository<Genre>
     /// <param name="gameKey">Game key.</param>
     /// <returns>List of genres.</returns>
     Task<IEnumerable<Genre>> GetByGameKeyAsync(string gameKey);
+
+    /// <summary>
+    /// Gets existing genre ids.
+    /// </summary>
+    /// <param name="ids">List of genre ids.</param>
+    /// <returns>List of existing genre ids.</returns>
+    Task<List<Guid>> GetExistingIdsAsync(List<Guid> ids);
 }
