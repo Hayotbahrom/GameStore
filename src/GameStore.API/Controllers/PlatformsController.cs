@@ -28,4 +28,8 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _platformService.DeleteAsync(id));
+
+    [HttpGet("by-platform/{platformId}")]
+    public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid platformId)
+        => Ok(await _platformService.GetGamesByPlatformIdAsync(platformId));
 }

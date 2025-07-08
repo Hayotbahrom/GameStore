@@ -2,6 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using AutoMapper;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
@@ -18,6 +19,13 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
+    {
+        var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
 
     /// <inheritdoc />
     public async Task<PlatformResultDto> CreateAsync(PlatformCreationDto dto)
