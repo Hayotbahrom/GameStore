@@ -2,6 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using AutoMapper;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
@@ -20,18 +21,33 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetByGenreIdAsync(Guid genreId)
+    {
+        var games = await _unitOfWork.Games.GetByGenreIdAsync(genreId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
+
+    /// <inheritdoc/>
     public async Task<Guid> AddAsync(GenreCreationDto dto)
     {
-        var genre = new Genre
+        var isExistParentGenre = await ValidateCreationDtoAsync(dto);
+        if (isExistParentGenre)
         {
-            Id = Guid.NewGuid(),
-            Name = dto.Name,
-            ParentGenreId = dto.ParentGenreId,
-        };
+            var genre = new Genre
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                ParentGenreId = dto.ParentGenreId,
+            };
 
-        await _unitOfWork.Genres.AddAsync(genre);
-        await _unitOfWork.SaveChangesAsync();
-        return genre.Id;
+            await _unitOfWork.Genres.AddAsync(genre);
+            await _unitOfWork.SaveChangesAsync();
+            return genre.Id;
+        }
+        else
+        {
+            throw new CustomException(404, "Parent genre not found");
+        }
     }
 
     /// <inheritdoc/>
@@ -96,6 +112,24 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private async Task<Genre> ValidateGenreAsync(Guid genreId)
     {
         var genre = await _unitOfWork.Genres.FindByIdAsync(genreId);
-        return genre ?? throw new CustomException(404, $"Game with ID {genreId} does not exist.");
+        return genre ?? throw new CustomException(404, $"Genre with ID {genreId} does not exist.");
+    }
+
+    /// <summary>
+    /// Validate parent genre is exist or not.
+    /// </summary>
+    /// <param name="dto">Creation dto.</param>
+    /// <returns>bool.</returns>
+    private async Task<bool> ValidateCreationDtoAsync(GenreCreationDto dto)
+    {
+        if (dto.ParentGenreId != null)
+        {
+            var parentGenre = await _unitOfWork.Genres.FindByIdAsync((Guid)dto.ParentGenreId);
+            return parentGenre == null ? throw new CustomException(404, "Parent genre not found") : true;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
