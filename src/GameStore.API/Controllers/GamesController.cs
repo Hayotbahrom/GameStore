@@ -34,14 +34,6 @@ public class GamesController(IGameService gameService) : ControllerBase
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _gameService.DeleteAsync(id));
 
-    [HttpGet("by-genre/{genreId}")]
-    public async Task<IActionResult> GetByGenreIdAsync(Guid genreId)
-    => Ok(await _gameService.GetByGenreIdAsync(genreId));
-
-    [HttpGet("by-platform/{platformId}")]
-    public async Task<IActionResult> GetByPlatformIdAsync(Guid platformId)
-        => Ok(await _gameService.GetByPlatformIdAsync(platformId));
-
     [HttpGet("{key}/download")]
     public async Task<IActionResult> DownloadGameFile(string key)
     {

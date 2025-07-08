@@ -40,7 +40,7 @@ public class GameRepository(GameStoreDbContext context) : Repository<Game>(conte
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<Game>> GetByGenreIdAsync(Guid genreId)
+    public async Task<IEnumerable<Game>> GetGamesByGenreIdAsync(Guid genreId)
     {
         return await DbSet
             .Where(g => g.GameGenres != null && g.GameGenres.Any(gg => gg.GenreId == genreId))
@@ -53,7 +53,7 @@ public class GameRepository(GameStoreDbContext context) : Repository<Game>(conte
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<Game>> GetByPlatformIdAsync(Guid platformId)
+    public async Task<IEnumerable<Game>> GetGamesByPlatformIdAsync(Guid platformId)
     {
         return await DbSet
             .Where(g => g.GamePlatforms != null && g.GamePlatforms.Any(gp => gp.PlatformId == platformId))

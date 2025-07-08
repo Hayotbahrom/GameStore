@@ -31,20 +31,6 @@ public interface IGameService
     Task<GameResultDto> GetByKeyAsync(string key);
 
     /// <summary>
-    /// Gets all game associated with given genre ID asynchronously.
-    /// </summary>
-    /// <param name="genreId">The identifier of the genre.</param>
-    /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetByGenreIdAsync(Guid genreId);
-
-    /// <summary>
-    /// Gets all game associated with given platform ID asynchronously.
-    /// </summary>
-    /// <param name="platformId">The identifier of the platform.</param>
-    /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetByPlatformIdAsync(Guid platformId);
-
-    /// <summary>
     /// Adds a new game asynchronously.
     /// </summary>
     /// <param name="game">The game to add.</param>

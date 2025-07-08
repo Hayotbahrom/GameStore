@@ -21,9 +21,9 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetByGenreIdAsync(Guid genreId)
+    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
     {
-        var games = await _unitOfWork.Games.GetByGenreIdAsync(genreId);
+        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 

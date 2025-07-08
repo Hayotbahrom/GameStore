@@ -22,14 +22,14 @@ public interface IGameRepository : IRepository<Game>
     /// </summary>
     /// <param name="genreId">Genre ID.</param>
     /// <returns>Game list. </returns>
-    Task<IEnumerable<Game>> GetByGenreIdAsync(Guid genreId);
+    Task<IEnumerable<Game>> GetGamesByGenreIdAsync(Guid genreId);
 
     /// <summary>
     /// Gets all games associated with given platform ID asynchronously.
     /// </summary>
     /// <param name="platformId">Platform ID.</param>
     /// <returns>Game list.</returns>
-    Task<IEnumerable<Game>> GetByPlatformIdAsync(Guid platformId);
+    Task<IEnumerable<Game>> GetGamesByPlatformIdAsync(Guid platformId);
 
     /// <summary>
     /// Loads a full game entity by its ID, including related entities like genres and platforms.

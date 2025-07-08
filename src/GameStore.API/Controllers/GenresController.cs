@@ -33,4 +33,8 @@ public class GenresController(IGenreService genreService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _genreService.DeleteAsync(id));
+
+    [HttpGet("by-genre/{genreId}")]
+    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid genreId)
+    => Ok(await _genreService.GetGamesByGenreIdAsync(genreId));
 }
