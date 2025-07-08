@@ -11,7 +11,7 @@ public class GenresController(IGenreService genreService) : ControllerBase
     private readonly IGenreService _genreService = genreService;
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync(GenreForCreationDto dto)
+    public async Task<IActionResult> PostAsync(GenreCreationDto dto)
         => Ok(await _genreService.AddAsync(dto));
 
     [HttpGet]
@@ -27,7 +27,7 @@ public class GenresController(IGenreService genreService) : ControllerBase
         => Ok(await _genreService.GetByIdAsync(id));
 
     [HttpPut]
-    public async Task<IActionResult> PutAsync(GenreForUpdateDto dto)
+    public async Task<IActionResult> PutAsync(GenreUpdateDto dto)
         => Ok(await _genreService.UpdateAsync(dto));
 
     [HttpDelete("{id}")]

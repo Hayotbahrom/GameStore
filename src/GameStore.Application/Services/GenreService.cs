@@ -20,7 +20,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc/>
-    public async Task<Guid> AddAsync(GenreForCreationDto dto)
+    public async Task<Guid> AddAsync(GenreCreationDto dto)
     {
         var genre = new Genre
         {
@@ -45,39 +45,39 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GenreForResultDto>> GetAllAsync()
+    public async Task<IEnumerable<GenreResultDto>> GetAllAsync()
     {
         var genres = await _unitOfWork.Genres
             .GetAll()
             .Include(x => x.ParentGenre)
             .ToListAsync();
 
-        return _mapper.Map<IEnumerable<GenreForResultDto>>(genres);
+        return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GenreForResultDto>> GetByGameKeyAsync(string gameKey)
+    public async Task<IEnumerable<GenreResultDto>> GetByGameKeyAsync(string gameKey)
     {
         var genres = await _unitOfWork.Genres.GetByGameKeyAsync(gameKey);
-        return _mapper.Map<IEnumerable<GenreForResultDto>>(genres);
+        return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
     /// <inheritdoc/>
-    public async Task<GenreForResultDto?> GetByIdAsync(Guid id)
+    public async Task<GenreResultDto?> GetByIdAsync(Guid id)
     {
         var genre = await ValidateGenreAsync(id);
-        return _mapper.Map<GenreForResultDto>(genre);
+        return _mapper.Map<GenreResultDto>(genre);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GenreForResultDto>> GetByParentIdAsync(Guid parentId)
+    public async Task<IEnumerable<GenreResultDto>> GetByParentIdAsync(Guid parentId)
     {
         var genres = await _unitOfWork.Genres.GetByParentIdAsync(parentId);
-        return _mapper.Map<IEnumerable<GenreForResultDto>>(genres);
+        return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateAsync(GenreForUpdateDto dto)
+    public async Task<bool> UpdateAsync(GenreUpdateDto dto)
     {
         var existingGenre = await ValidateGenreAsync(dto.Id);
 

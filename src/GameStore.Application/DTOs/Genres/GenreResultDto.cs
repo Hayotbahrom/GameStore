@@ -1,14 +1,15 @@
-﻿// <copyright file="GenreForUpdateDto.cs" company="Epam">
+﻿// <copyright file="GenreForResultDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+
 using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.Application.DTOs.Genres;
 
 /// <summary>
-/// Represents of genre for update DTO.
+/// Represents of genre for result DTO.
 /// </summary>
-public class GenreForUpdateDto
+public class GenreResultDto
 {
     /// <summary>
     /// Gets or sets the unique identifier for the genre.
@@ -24,5 +25,5 @@ public class GenreForUpdateDto
     /// <summary>
     /// Gets or sets the Id of the parent genre, if this genre is a sub-genre.
     /// </summary>
-    public Guid? ParentGenreId { get; set; }
+    public string? ParentGenreName { get; set; }
 }

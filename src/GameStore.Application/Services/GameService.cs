@@ -34,42 +34,42 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameForResultDto>> GetAllAsync()
+    public async Task<IEnumerable<GameResultDto>> GetAllAsync()
     {
         var games = await _unitOfWork.Games.GetAll().ToListAsync();
-        return _mapper.Map<IEnumerable<GameForResultDto>>(games);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameForResultDto>> GetByGenreAsync(Guid genreId)
+    public async Task<IEnumerable<GameResultDto>> GetByGenreAsync(Guid genreId)
     {
         var games = await _unitOfWork.Games.GetByGenreAsync(genreId);
-        return _mapper.Map<IEnumerable<GameForResultDto>>(games);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameForResultDto>> GetByPlatformAsync(Guid platformId)
+    public async Task<IEnumerable<GameResultDto>> GetByPlatformAsync(Guid platformId)
     {
         var games = await _unitOfWork.Games.GetByPlatformAsync(platformId);
-        return _mapper.Map<IEnumerable<GameForResultDto>>(games);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
     /// <inheritdoc/>
-    public async Task<GameForResultDto> GetByIdAsync(Guid id)
+    public async Task<GameResultDto> GetByIdAsync(Guid id)
     {
         var game = await ValidateAndGetGameAsync(id);
-        return _mapper.Map<GameForResultDto>(game);
+        return _mapper.Map<GameResultDto>(game);
     }
 
     /// <inheritdoc/>
-    public async Task<GameForResultDto> GetByKeyAsync(string key)
+    public async Task<GameResultDto> GetByKeyAsync(string key)
     {
         var game = await _unitOfWork.Games.GetByKeyAsync(key);
-        return _mapper.Map<GameForResultDto>(game) ?? throw new CustomException(404, "Game is not found");
+        return _mapper.Map<GameResultDto>(game) ?? throw new CustomException(404, "Game is not found");
     }
 
     /// <inheritdoc/>
-    public async Task<GameForResultDto> AddGameAsync(GameForCreationDto game)
+    public async Task<GameResultDto> AddGameAsync(GameCreationDto game)
     {
         ValidateGame(game);
 
@@ -77,7 +77,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         await _unitOfWork.Games.AddAsync(resultGame);
         await _unitOfWork.SaveChangesAsync();
-        return _mapper.Map<GameForResultDto>(resultGame);
+        return _mapper.Map<GameResultDto>(resultGame);
     }
 
     /// <inheritdoc/>
@@ -95,7 +95,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
-    public async Task<bool> UpdateGameAsync(GameForUpdateDto game)
+    public async Task<bool> UpdateGameAsync(GameUpdateDto game)
     {
         var existingGame = await ValidateAndGetGameAsync(game.Id);
 
@@ -120,7 +120,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// </summary>
     /// <param name="game">Game creation dto.</param>
     /// <returns>Game entity.</returns>
-    private static Game MapToGameEntity(GameForCreationDto game)
+    private static Game MapToGameEntity(GameCreationDto game)
     {
         return new Game
         {
@@ -139,7 +139,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// Validate game creation dto.
     /// </summary>
     /// <param name="game">Game creation dto.</param>
-    private static void ValidateGame(GameForCreationDto game)
+    private static void ValidateGame(GameCreationDto game)
     {
         if (game == null)
         {
@@ -152,7 +152,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// </summary>
     /// <param name="existingGame">Game model.</param>
     /// <param name="game">GameForUpdate DTO.</param>
-    private static void ApplyGameUpdates(Game existingGame, GameForUpdateDto game)
+    private static void ApplyGameUpdates(Game existingGame, GameUpdateDto game)
     {
         existingGame.Name = game.Name;
         existingGame.Description = game.Description;

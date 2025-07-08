@@ -14,49 +14,49 @@ public interface IGameService
     /// Gets all games asynchronously.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation, containing a list of games.</returns>
-    Task<IEnumerable<GameForResultDto>> GetAllAsync();
+    Task<IEnumerable<GameResultDto>> GetAllAsync();
 
     /// <summary>
     /// Gets a game by its identifier asynchronously.
     /// </summary>
     /// <param name="id">The identifier of the game.</param>
     /// <returns>A task that represents the asynchronous operation, containing the game.</returns>
-    Task<GameForResultDto> GetByIdAsync(Guid id);
+    Task<GameResultDto> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Gets a game by key asynchronously.
     /// </summary>
     /// <param name="key">The key of the game.</param>
     /// <returns>A task that represents the asynchronous operation, containing the game.</returns>
-    Task<GameForResultDto> GetByKeyAsync(string key);
+    Task<GameResultDto> GetByKeyAsync(string key);
 
     /// <summary>
     /// Gets all game associated with given genre ID asynchronously.
     /// </summary>
     /// <param name="genreId">The identifier of the genre.</param>
     /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameForResultDto>> GetByGenreAsync(Guid genreId);
+    Task<IEnumerable<GameResultDto>> GetByGenreAsync(Guid genreId);
 
     /// <summary>
     /// Gets all game associated with given platform ID asynchronously.
     /// </summary>
     /// <param name="platformId">The identifier of the platform.</param>
     /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameForResultDto>> GetByPlatformAsync(Guid platformId);
+    Task<IEnumerable<GameResultDto>> GetByPlatformAsync(Guid platformId);
 
     /// <summary>
     /// Adds a new game asynchronously.
     /// </summary>
     /// <param name="game">The game to add.</param>
     /// <returns>A created game.</returns>
-    Task<GameForResultDto> AddGameAsync(GameForCreationDto game);
+    Task<GameResultDto> AddGameAsync(GameCreationDto game);
 
     /// <summary>
     /// Updates an existing game asynchronously.
     /// </summary>
     /// <param name="game">The game to update.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task<bool> UpdateGameAsync(GameForUpdateDto game);
+    Task<bool> UpdateGameAsync(GameUpdateDto game);
 
     /// <summary>
     /// Deletes a game by its identifier asynchronously.

@@ -14,42 +14,42 @@ public interface IGenreService
     /// Gets all genres asynchronously.
     /// </summary>
     /// <returns>List of GenreFoResultDto.</returns>
-    Task<IEnumerable<GenreForResultDto>> GetAllAsync();
+    Task<IEnumerable<GenreResultDto>> GetAllAsync();
 
     /// <summary>
     /// Gets a genre by its identifier asynchronously.
     /// </summary>
     /// <param name="id">Genre id.</param>
     /// <returns>GenreForResultDto.</returns>
-    Task<GenreForResultDto?> GetByIdAsync(Guid id);
+    Task<GenreResultDto?> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Gets sub-genres associated with a specific parent genre ID asynchronously.
     /// </summary>
     /// <param name="parentId">Parent genre id.</param>
     /// <returns>List of GenreFoResultDto.</returns>
-    Task<IEnumerable<GenreForResultDto>> GetByParentIdAsync(Guid parentId);
+    Task<IEnumerable<GenreResultDto>> GetByParentIdAsync(Guid parentId);
 
     /// <summary>
     /// Gets genres associated with a specific game key asynchronously.
     /// </summary>
     /// <param name="gameKey">Game key.</param>
     /// <returns>List of games by given gamekey.</returns>
-    Task<IEnumerable<GenreForResultDto>> GetByGameKeyAsync(string gameKey);
+    Task<IEnumerable<GenreResultDto>> GetByGameKeyAsync(string gameKey);
 
     /// <summary>
     /// Adds a new genre asynchronously.
     /// </summary>
     /// <param name="dto">GenreForCreation DTO.</param>
     /// <returns>New genre id.</returns>
-    Task<Guid> AddAsync(GenreForCreationDto dto);
+    Task<Guid> AddAsync(GenreCreationDto dto);
 
     /// <summary>
     /// Updates an existing genre asynchronously.
     /// </summary>
     /// <param name="dto">GenreForUpdateDto. </param>
     /// <returns>bool.</returns>
-    Task<bool> UpdateAsync(GenreForUpdateDto dto);
+    Task<bool> UpdateAsync(GenreUpdateDto dto);
 
     /// <summary>
     /// Deletes a genre by its identifier asynchronously.

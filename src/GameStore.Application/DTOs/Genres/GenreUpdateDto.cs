@@ -1,16 +1,20 @@
-﻿// <copyright file="GenreForCreationDto.cs" company="Epam">
+﻿// <copyright file="GenreForUpdateDto.cs" company="Epam">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-
 using System.ComponentModel.DataAnnotations;
 
 namespace GameStore.Application.DTOs.Genres;
 
 /// <summary>
-/// Represents of genre for creation DTO.
+/// Represents of genre for update DTO.
 /// </summary>
-public class GenreForCreationDto
+public class GenreUpdateDto
 {
+    /// <summary>
+    /// Gets or sets the unique identifier for the genre.
+    /// </summary>
+    public Guid Id { get; set; }
+
     /// <summary>
     /// Gets or sets the name of the genre.
     /// </summary>

@@ -8,7 +8,7 @@ namespace GameStore.Application.DTOs.Games;
 /// <summary>
 /// Represents game for creation Data Transfer Object (DTO).
 /// </summary>
-public class GameForCreationDto
+public class GameCreationDto
 {
     /// <summary>
     /// Gets or sets the name of the game.

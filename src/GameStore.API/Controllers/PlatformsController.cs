@@ -10,7 +10,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     private readonly IPlatformService _platformService = platformService;
 
     [HttpPost]
-    public async Task<IActionResult> PostAsync(PlatformForCreationDto dto)
+    public async Task<IActionResult> PostAsync(PlatformCreationDto dto)
         => Ok(await _platformService.CreatePlatformAsync(dto));
 
     [HttpGet]
@@ -22,7 +22,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
         => Ok(await _platformService.GetPlatformByIdAsync(id));
 
     [HttpPut]
-    public async Task<IActionResult> PutAsync(PlatformForUpdateDto dto)
+    public async Task<IActionResult> PutAsync(PlatformUpdateDto dto)
         => Ok(await _platformService.UpdatePlatformAsync(dto));
 
     [HttpDelete("{id}")]

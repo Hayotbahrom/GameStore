@@ -20,9 +20,9 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // Game
-        CreateMap<Game, GameForCreationDto>().ReverseMap();
-        CreateMap<Game, GameForUpdateDto>().ReverseMap();
-        CreateMap<Game, GameForResultDto>()
+        CreateMap<Game, GameCreationDto>().ReverseMap();
+        CreateMap<Game, GameUpdateDto>().ReverseMap();
+        CreateMap<Game, GameResultDto>()
             .ForMember(
                 dest => dest.Genres,
                 opt => opt.MapFrom(src => src.GameGenres.Select(gg => gg.Genre != null ? gg.Genre.Name : string.Empty)))
@@ -32,16 +32,16 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         // Genre
-        CreateMap<Genre, GenreForCreationDto>().ReverseMap();
-        CreateMap<Genre, GenreForUpdateDto>().ReverseMap();
-        CreateMap<Genre, GenreForResultDto>()
+        CreateMap<Genre, GenreCreationDto>().ReverseMap();
+        CreateMap<Genre, GenreUpdateDto>().ReverseMap();
+        CreateMap<Genre, GenreResultDto>()
             .ForMember(
             dest => dest.ParentGenreName,
             opt => opt.MapFrom(src => src.ParentGenre != null ? src.ParentGenre.Name : null));
 
         // Platform
-        CreateMap<Platform, PlatformForCreationDto>().ReverseMap();
-        CreateMap<Platform, PlatformForUpdateDto>().ReverseMap();
-        CreateMap<Platform, PlatformForResultDto>().ReverseMap();
+        CreateMap<Platform, PlatformCreationDto>().ReverseMap();
+        CreateMap<Platform, PlatformUpdateDto>().ReverseMap();
+        CreateMap<Platform, PlatformResultDto>().ReverseMap();
     }
 }

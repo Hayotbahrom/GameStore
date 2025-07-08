@@ -8,7 +8,7 @@ namespace GameStore.Application.DTOs.Platforms;
 /// <summary>
 /// Represents of platform for result DTO.
 /// </summary>
-public class PlatformForResultDto
+public class PlatformResultDto
 {
     /// <summary>
     /// Gets or sets the unique identifier for the platform.

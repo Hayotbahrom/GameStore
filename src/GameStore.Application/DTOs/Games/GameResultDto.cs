@@ -6,7 +6,7 @@ namespace GameStore.Application.DTOs.Games;
 /// <summary>
 /// Represents a game for result Data Transfer Object (DTO).
 /// </summary>
-public class GameForResultDto
+public class GameResultDto
 {
     /// <summary>
     /// Gets or sets the unique identifier of the game.

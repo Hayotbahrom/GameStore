@@ -20,7 +20,7 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc />
-    public async Task<PlatformForResultDto> CreatePlatformAsync(PlatformForCreationDto dto)
+    public async Task<PlatformResultDto> CreatePlatformAsync(PlatformCreationDto dto)
     {
         var platform = new Platform
         {
@@ -30,7 +30,7 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
 
         await _unitOfWork.Platforms.AddAsync(platform);
         await _unitOfWork.SaveChangesAsync();
-        return _mapper.Map<PlatformForResultDto>(platform);
+        return _mapper.Map<PlatformResultDto>(platform);
     }
 
     /// <inheritdoc />
@@ -44,28 +44,28 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PlatformForResultDto>> GetAllPlatformsAsync()
+    public async Task<IEnumerable<PlatformResultDto>> GetAllPlatformsAsync()
     {
         var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
-        return _mapper.Map<IEnumerable<PlatformForResultDto>>(platforms);
+        return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<PlatformForResultDto>> GetByGameKeyAsync(string gameKey)
+    public async Task<IEnumerable<PlatformResultDto>> GetByGameKeyAsync(string gameKey)
     {
         var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
-        return _mapper.Map<IEnumerable<PlatformForResultDto>>(platforms);
+        return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
     /// <inheritdoc />
-    public async Task<PlatformForResultDto?> GetPlatformByIdAsync(Guid id)
+    public async Task<PlatformResultDto?> GetPlatformByIdAsync(Guid id)
     {
         var platform = await ValidatePlatformExistAsync(id);
-        return platform == null ? null : _mapper.Map<PlatformForResultDto>(platform);
+        return _mapper.Map<PlatformResultDto>(platform);
     }
 
     /// <inheritdoc />
-    public async Task<bool> UpdatePlatformAsync(PlatformForUpdateDto dto)
+    public async Task<bool> UpdatePlatformAsync(PlatformUpdateDto dto)
     {
         var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
