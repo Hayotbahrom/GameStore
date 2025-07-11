@@ -114,6 +114,13 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         return fileContent;
     }
 
+    /// <inheritdoc/>
+    public async Task<int> GetTotalGamesCountAsync()
+    {
+        var games = _unitOfWork.Games.GetAll();
+        return await games.CountAsync();
+    }
+
     /// <summary>
     /// Generate a unique key for a game based on its name.
     /// </summary>

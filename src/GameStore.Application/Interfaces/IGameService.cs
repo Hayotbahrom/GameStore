@@ -57,4 +57,10 @@ public interface IGameService
     /// <param name="key">The unique game key used to find the game.</param>
     /// <returns>A byte array representing the content of the game file.</returns>
     Task<byte[]> GenerateGameFileAsync(string key);
+
+    /// <summary>
+    /// Get number of all games.
+    /// </summary>
+    /// <returns>All games count.</returns>
+    Task<int> GetTotalGamesCountAsync();
 }
