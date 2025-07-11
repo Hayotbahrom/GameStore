@@ -18,6 +18,8 @@ builder.Services.AddCustomService();
 
 builder.Services.AddResponseCaching();
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
