@@ -14,10 +14,12 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
         => Ok(await _platformService.CreateAsync(dto));
 
     [HttpGet]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _platformService.GetAllAsync());
 
     [HttpGet("{id}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetByIdAsync(Guid id)
         => Ok(await _platformService.GetByIdAsync(id));
 
@@ -30,6 +32,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
         => Ok(await _platformService.DeleteAsync(id));
 
     [HttpGet("{platformId}/games")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid platformId)
         => Ok(await _platformService.GetGamesByPlatformIdAsync(platformId));
 }
