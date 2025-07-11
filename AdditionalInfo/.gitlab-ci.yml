@@ -3,6 +3,7 @@ variables:
 
 stages:
   - build
+  - test
 
 build:
   image: mcr.microsoft.com/dotnet/sdk:8.0
