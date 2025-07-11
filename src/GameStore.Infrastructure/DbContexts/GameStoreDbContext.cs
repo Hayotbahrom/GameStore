@@ -46,79 +46,84 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
     /// <param name="modelBuilder">the model builder used to configure entities. </param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Game
+        ConfigureIndexes(modelBuilder);
+        ConfigureRelationships(modelBuilder);
+
+        SeedGenres(modelBuilder);
+        SeedGames(modelBuilder);
+        SeedPlatforms(modelBuilder);
+        SeedGameGenres(modelBuilder);
+        SeedGamePlatforms(modelBuilder);
+    }
+
+    private static void ConfigureIndexes(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Game>()
             .HasIndex(g => g.Key)
             .IsUnique();
+    }
 
-        // Genre parent-child
+    private static void ConfigureRelationships(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Genre>()
             .HasOne(g => g.ParentGenre)
             .WithMany(g => g.SubGenres)
             .HasForeignKey(g => g.ParentGenreId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Game-Genre relationship
-        modelBuilder.Entity<GameGenre>()
-            .HasKey(gg => new { gg.GameId, gg.GenreId });
+        modelBuilder.Entity<GameGenre>().HasKey(gg => new { gg.GameId, gg.GenreId });
+        modelBuilder.Entity<GameGenre>().HasOne(gg => gg.Game).WithMany(g => g.GameGenres).HasForeignKey(gg => gg.GameId);
+        modelBuilder.Entity<GameGenre>().HasOne(gg => gg.Genre).WithMany(g => g.GameGenres).HasForeignKey(gg => gg.GenreId);
 
-        modelBuilder.Entity<GameGenre>()
-            .HasOne(gg => gg.Game)
-            .WithMany(g => g.GameGenres)
-            .HasForeignKey(gg => gg.GameId);
+        modelBuilder.Entity<GamePlatform>().HasKey(gp => new { gp.GameId, gp.PlatformId });
+        modelBuilder.Entity<GamePlatform>().HasOne(gp => gp.Game).WithMany(g => g.GamePlatforms).HasForeignKey(gp => gp.GameId);
+        modelBuilder.Entity<GamePlatform>().HasOne(gp => gp.Platform).WithMany(g => g.GamePlatforms).HasForeignKey(gp => gp.PlatformId);
+    }
 
-        modelBuilder.Entity<GameGenre>()
-            .HasOne(gg => gg.Genre)
-            .WithMany(g => g.GameGenres)
-            .HasForeignKey(gg => gg.GenreId);
+    private static void SeedGenres(ModelBuilder modelBuilder)
+    {
+        var strategyId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var actionId = Guid.Parse("ccc11111-cccc-cccc-cccc-cccccccccccc");
 
-        // Game-Platform relationship
-        modelBuilder.Entity<GamePlatform>()
-            .HasKey(gp => new { gp.GameId, gp.PlatformId });
+        modelBuilder.Entity<Genre>().HasData(
+            new Genre { Id = strategyId, Name = "Strategy" },
+            new Genre { Id = Guid.Parse("aaa22222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "RTS", ParentGenreId = strategyId },
+            new Genre { Id = Guid.Parse("aaa33333-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "TBS", ParentGenreId = strategyId },
+            new Genre { Id = Guid.Parse("bbb11111-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Name = "RPG" },
+            new Genre { Id = actionId, Name = "Action" },
+            new Genre { Id = Guid.Parse("ccc22222-cccc-cccc-cccc-cccccccccccc"), Name = "FPS", ParentGenreId = actionId });
+    }
 
-        modelBuilder.Entity<GamePlatform>()
-            .HasOne(gp => gp.Game)
-            .WithMany(g => g.GamePlatforms)
-            .HasForeignKey(gp => gp.GameId);
-
-        modelBuilder.Entity<GamePlatform>()
-            .HasOne(gp => gp.Platform)
-            .WithMany(g => g.GamePlatforms)
-            .HasForeignKey(gp => gp.PlatformId);
-
+    private static void SeedGames(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Game>().HasData(
-             new Game
-             {
-                 Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
-                 Name = "Super Strategy Game",
-                 Key = "super-strategy",
-                 Description = "A deep and challenging strategy game.",
-             },
-             new Game
-             {
-                 Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
-                 Name = "Arcade Shooter",
-                 Key = "arcade-shooter",
-                 Description = "Fast-paced arcade FPS experience.",
-             });
+        new Game
+        {
+            Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+            Name = "Super Strategy Game",
+            Key = "super-strategy",
+            Description = "A deep and challenging strategy game.",
+        },
+        new Game
+        {
+            Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+            Name = "Arcade Shooter",
+            Key = "arcade-shooter",
+            Description = "Fast-paced arcade FPS experience.",
+        });
+    }
 
-        // Seed Platforms
+    private static void SeedPlatforms(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<Platform>().HasData(
             new Platform { Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Type = "Mobile" },
             new Platform { Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), Type = "Browser" },
             new Platform { Id = Guid.Parse("33333333-3333-3333-3333-333333333333"), Type = "Desktop" },
             new Platform { Id = Guid.Parse("44444444-4444-4444-4444-444444444444"), Type = "Console" });
+    }
 
-        // Seed Genres
-        modelBuilder.Entity<Genre>().HasData(
-            new Genre { Id = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "Strategy" },
-            new Genre { Id = Guid.Parse("aaa22222-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "RTS", ParentGenreId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa") },
-            new Genre { Id = Guid.Parse("aaa33333-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "TBS", ParentGenreId = Guid.Parse("aaa11111-aaaa-aaaa-aaaa-aaaaaaaaaaaa") },
-            new Genre { Id = Guid.Parse("bbb11111-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Name = "RPG" },
-            new Genre { Id = Guid.Parse("ccc11111-cccc-cccc-cccc-cccccccccccc"), Name = "Action" },
-            new Genre { Id = Guid.Parse("ccc22222-cccc-cccc-cccc-cccccccccccc"), Name = "FPS", ParentGenreId = Guid.Parse("ccc11111-cccc-cccc-cccc-cccccccccccc") });
-
-        // Seed GameGenre
+    private static void SeedGameGenres(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<GameGenre>().HasData(
             new GameGenre
             {
@@ -130,8 +135,10 @@ public class GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : 
                 GameId = Guid.Parse("88888888-8888-8888-8888-888888888888"),
                 GenreId = Guid.Parse("ccc22222-cccc-cccc-cccc-cccccccccccc"),
             });
+    }
 
-        // Seed GamePlatform
+    private static void SeedGamePlatforms(ModelBuilder modelBuilder)
+    {
         modelBuilder.Entity<GamePlatform>().HasData(
             new GamePlatform
             {
