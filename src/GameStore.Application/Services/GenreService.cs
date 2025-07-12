@@ -28,7 +28,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     }
 
     /// <inheritdoc/>
-    public async Task<Guid> AddAsync(GenreCreationDto dto)
+    public async Task<GenreResultDto> AddAsync(GenreCreationDto dto)
     {
         var isExistParentGenre = await ValidateCreationDtoAsync(dto);
         if (isExistParentGenre)
@@ -42,7 +42,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
 
             await _unitOfWork.Genres.AddAsync(genre);
             await _unitOfWork.SaveChangesAsync();
-            return genre.Id;
+            return _mapper.Map<GenreResultDto>(genre);
         }
         else
         {

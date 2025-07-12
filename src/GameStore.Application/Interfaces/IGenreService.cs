@@ -43,7 +43,7 @@ public interface IGenreService
     /// </summary>
     /// <param name="dto">GenreForCreation DTO.</param>
     /// <returns>New genre id.</returns>
-    Task<Guid> AddAsync(GenreCreationDto dto);
+    Task<GenreResultDto> AddAsync(GenreCreationDto dto);
 
     /// <summary>
     /// Updates an existing genre asynchronously.
