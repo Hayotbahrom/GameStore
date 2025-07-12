@@ -98,7 +98,7 @@ public class GenreControllerTests
     }
 
     [Fact]
-    public async Task PutAsyncReturnsOkResult()
+    public async Task UpdateAsyncReturnsOkResult()
     {
         // Arrange
         var dto = new GenreUpdateDto { Id = Guid.NewGuid(), Name = "Updated Genre" };
