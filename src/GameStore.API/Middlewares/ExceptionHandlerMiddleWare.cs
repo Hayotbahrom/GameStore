@@ -37,7 +37,7 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
             var problem = new
             {
                 status = 500,
-                message = ex.Message,
+                message = "An unexpected error occured. Please try again later.",
             };
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(problem));
