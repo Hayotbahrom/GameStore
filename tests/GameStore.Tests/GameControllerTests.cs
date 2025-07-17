@@ -39,6 +39,42 @@ public class GameControllerTests
     }
 
     [Fact]
+    public async Task GetGamesByGenreIdAsyncReturnsOkResult()
+    {
+        // Arrange
+        var genreId = Guid.NewGuid();
+        var games = new List<GameResultDto> { new() { Id = Guid.NewGuid(), Name = "Game 1" } };
+        _mockGameService.Setup(s => s.GetGamesByGenreIdAsync(genreId)).ReturnsAsync(games);
+
+        // Act
+        var result = await _controller.GetGamesByGenreIdAsync(genreId);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<IEnumerable<GameResultDto>>(okResult.Value);
+        Assert.Single(returnValue);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatformIdAsyncReturnsOkResultWithListOfGames()
+    {
+        var platformId = Guid.NewGuid();
+        var games = new List<GameResultDto>
+        {
+            new() { Id = Guid.NewGuid(), Name = "Game 1", Key = "game-1" },
+            new() { Id = Guid.NewGuid(), Name = "Game 2", Key = "game-2" },
+        };
+
+        _mockGameService.Setup(s => s.GetGamesByPlatformIdAsync(platformId)).ReturnsAsync(games);
+
+        var result = await _controller.GetGamesByPlatformIdAsync(platformId);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var returnValue = Assert.IsAssignableFrom<IEnumerable<GameResultDto>>(okResult.Value);
+        Assert.Equal(2, returnValue.Count());
+    }
+
+    [Fact]
     public async Task DeleteAsyncReturnsOkResultWithBool()
     {
         // Arrange

@@ -1,5 +1,4 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 using GameStore.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -90,24 +89,5 @@ public class PlatformsControllerTests
 
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.True((bool)okResult.Value!);
-    }
-
-    [Fact]
-    public async Task GetGamesByPlatformIdAsyncReturnsOkResultWithListOfGames()
-    {
-        var platformId = Guid.NewGuid();
-        var games = new List<GameResultDto>
-        {
-            new() { Id = Guid.NewGuid(), Name = "Game 1", Key = "game-1" },
-            new() { Id = Guid.NewGuid(), Name = "Game 2", Key = "game-2" },
-        };
-
-        _mockPlatformService.Setup(s => s.GetGamesByPlatformIdAsync(platformId)).ReturnsAsync(games);
-
-        var result = await _controller.GetGamesByPlatformIdAsync(platformId);
-
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsAssignableFrom<IEnumerable<GameResultDto>>(okResult.Value);
-        Assert.Equal(2, returnValue.Count());
     }
 }

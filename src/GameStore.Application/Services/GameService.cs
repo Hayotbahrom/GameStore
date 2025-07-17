@@ -43,6 +43,20 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
+    {
+        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
+    {
+        var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
+
+    /// <inheritdoc/>
     public async Task<GameResultDto> GetByIdAsync(Guid id)
     {
         var game = await ValidateAndGetGameAsync(id);

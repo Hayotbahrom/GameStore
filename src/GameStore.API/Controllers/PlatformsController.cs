@@ -30,9 +30,4 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _platformService.DeleteAsync(id));
-
-    [HttpGet("{platformId}/games")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid platformId)
-        => Ok(await _platformService.GetGamesByPlatformIdAsync(platformId));
 }

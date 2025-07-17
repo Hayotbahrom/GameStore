@@ -1,5 +1,4 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 using GameStore.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -127,22 +126,5 @@ public class GenreControllerTests
         var okResult = Assert.IsType<OkObjectResult>(result);
         var success = Assert.IsType<bool>(okResult.Value);
         Assert.True(success);
-    }
-
-    [Fact]
-    public async Task GetGamesByGenreIdAsyncReturnsOkResult()
-    {
-        // Arrange
-        var genreId = Guid.NewGuid();
-        var games = new List<GameResultDto> { new() { Id = Guid.NewGuid(), Name = "Game 1" } };
-        _mockGenreService.Setup(s => s.GetGamesByGenreIdAsync(genreId)).ReturnsAsync(games);
-
-        // Act
-        var result = await _controller.GetGamesByGenreIdAsync(genreId);
-
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsAssignableFrom<IEnumerable<GameResultDto>>(okResult.Value);
-        Assert.Single(returnValue);
     }
 }
