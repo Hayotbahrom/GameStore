@@ -2,7 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using System.Linq.Expressions;
 using GameStore.Infrastructure.DbContexts;
 using GameStore.Infrastructure.IRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -29,12 +28,6 @@ public class Repository<T>(GameStoreDbContext context) : IRepository<T>
     /// Gets the database context.
     /// </summary>
     protected GameStoreDbContext Context { get; } = context;
-
-    /// <inheritdoc/>
-    public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-        => await DbSet
-            .Where(predicate)
-            .ToListAsync();
 
     /// <inheritdoc/>
     public virtual async Task<T?> FindByIdAsync(Guid id)
