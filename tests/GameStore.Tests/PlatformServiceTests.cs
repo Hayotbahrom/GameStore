@@ -38,11 +38,11 @@ public class PlatformServiceTests
             Type = p.Type,
         }).ToList();
 
-        var mockGames = platforms.AsQueryable().BuildMock();
+        var mockPlatforms = platforms.AsQueryable().BuildMock();
 
         _unitOfWorkMock
             .Setup(u => u.Platforms.GetAll())
-            .Returns(mockGames);
+            .Returns(mockPlatforms);
 
         _mapperMock
             .Setup(m => m.Map<IEnumerable<PlatformResultDto>>(platforms))
