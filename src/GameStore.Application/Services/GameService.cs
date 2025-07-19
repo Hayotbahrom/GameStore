@@ -194,14 +194,14 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         var existingGenreIds = await _unitOfWork.Genres.GetExistingIdsAsync(game.GenreIds);
         var missingGenreIds = game.GenreIds.Except(existingGenreIds).ToList();
-        if (missingGenreIds.Count != 0)
+        if (missingGenreIds.Count > 0)
         {
             throw new CustomException(400, $"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
         }
 
         var existingPlatformIds = await _unitOfWork.Platforms.GetExistingIdsAsync(game.PlatformIds);
         var missingPlatformIds = game.PlatformIds.Except(existingPlatformIds).ToList();
-        if (missingPlatformIds.Count != 0)
+        if (missingPlatformIds.Count > 0)
         {
             throw new CustomException(400, $"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
         }
