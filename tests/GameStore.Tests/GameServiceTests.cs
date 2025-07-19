@@ -432,6 +432,131 @@ public class GameServiceTests
     }
 
     [Fact]
+    public async Task AddAsyncInvalidGenreIdsInDataBaseShouldThrowCustomException()
+    {
+        // Arrange
+        var genreId1 = Guid.NewGuid();
+        var genreId2 = Guid.NewGuid();
+
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Invalid Genre test",
+            GenreIds = new List<Guid> { genreId1, genreId2 },
+            PlatformIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+        };
+
+        _unitOfWorkMock
+            .Setup(u => u.Genres.GetExistingIdsAsync(gameCreationDto.GenreIds))
+            .ReturnsAsync(new List<Guid> { genreId1 });
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, ex.StatusCode);
+        Assert.Equal($"The following genre IDs are invalid: {genreId2}", ex.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncInvalidPlatformIdsInDataBaseShouldThrowCustomException()
+    {
+        var platformId1 = Guid.NewGuid();
+        var platformId2 = Guid.NewGuid();
+
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Invalid Platform Test",
+            GenreIds = new List<Guid> { Guid.NewGuid() },
+            PlatformIds = new List<Guid> { platformId1, platformId2 },
+        };
+
+        _unitOfWorkMock
+            .Setup(u => u.Genres.GetExistingIdsAsync(gameCreationDto.GenreIds))
+            .ReturnsAsync(gameCreationDto.GenreIds);
+
+        _unitOfWorkMock
+            .Setup(u => u.Platforms.GetExistingIdsAsync(gameCreationDto.PlatformIds))
+            .ReturnsAsync(new List<Guid> { platformId1 });
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, ex.StatusCode);
+        Assert.Equal($"The following platform IDs are invalid: {platformId2}", ex.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncEmptyGenreIdsShouldThrowCustomException()
+    {
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Test Game",
+            Key = "gamekey",
+            GenreIds = new List<Guid>(),
+            PlatformIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+        };
+
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, exception.StatusCode);
+        Assert.Equal("At least one genre must be provided.", exception.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncNullGenreIdsShouldThrowCustomException()
+    {
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Test Game",
+            Key = "gamekey",
+            GenreIds = null,
+            PlatformIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+        };
+
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, exception.StatusCode);
+        Assert.Equal("At least one genre must be provided.", exception.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncEmptyPlatformIdsShouldThrowCustomException()
+    {
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Test Game",
+            Key = "gamekey",
+            PlatformIds = new List<Guid>(),
+            GenreIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+        };
+
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, exception.StatusCode);
+        Assert.Equal("At least one platform must be provided.", exception.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncNullPlatformIdsShouldThrowCustomException()
+    {
+        var gameCreationDto = new GameCreationDto
+        {
+            Name = "Test Game",
+            Key = "gamekey",
+            PlatformIds = null,
+            GenreIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+        };
+
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(gameCreationDto));
+        Assert.Equal(400, exception.StatusCode);
+        Assert.Equal("At least one platform must be provided.", exception.Message);
+    }
+
+    [Fact]
+    public async Task AddAsyncNullGameShouldThrowCustomException()
+    {
+        // Act and Assert
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.AddAsync(null));
+
+        Assert.Equal(400, exception.StatusCode);
+        Assert.Equal("Game cannot be null.", exception.Message);
+    }
+
+    [Fact]
     public async Task DeleteAsyncValidKeyShouldDeleteGameAndReturnTrue()
     {
         // Arrange
@@ -473,6 +598,7 @@ public class GameServiceTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.DeleteAsync(gameKey));
+
         Assert.Equal(404, exception.StatusCode);
         Assert.Equal("Game not found with given Key.", exception.Message);
 
@@ -534,5 +660,63 @@ public class GameServiceTests
 
         // Assert
         Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncExistGameKeyShouldThrowCustomException()
+    {
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test",
+            Key = "Test",
+            Description = "Test",
+            GenreIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
+            PlatformIds = new List<Guid> { Guid.NewGuid() },
+        };
+
+        var game = new Game
+        {
+            Id = gameUpdateDto.Id,
+            Name = gameUpdateDto.Name,
+            Key = gameUpdateDto.Key,
+            Description = gameUpdateDto.Description,
+        };
+
+        _unitOfWorkMock
+            .Setup(u => u.Games.Update(game));
+
+        _unitOfWorkMock
+            .Setup(u => u.Games.GetFullGameByIdAsync(gameUpdateDto.Id))
+            .ReturnsAsync(game);
+
+        _unitOfWorkMock
+            .Setup(u => u.SaveChangesAsync())
+            .ReturnsAsync(1);
+
+        // Act
+        var result = await _gameService.UpdateAsync(gameUpdateDto);
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(game.Key, gameUpdateDto.Key);
+    }
+
+    [Fact]
+    public async Task UpdateAsyncInvalidGameIdShouldThrowCustomException()
+    {
+        var game = new GameUpdateDto { Id = Guid.NewGuid(), Name = "Test", Key = "Test", };
+
+        _unitOfWorkMock
+            .Setup(u => u.Games.GetFullGameByIdAsync(game.Id))
+            .ReturnsAsync((Game)null);
+
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.UpdateAsync(game));
+
+        Assert.Equal(404, exception.StatusCode);
+        Assert.Equal("Game is not found.", exception.Message);
+
+        _unitOfWorkMock.Verify(u => u.Games.FindByIdAsync(game.Id), Times.Never());
+        _unitOfWorkMock.Verify(u => u.Games.GetFullGameByIdAsync(game.Id), Times.Once());
     }
 }
