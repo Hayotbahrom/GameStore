@@ -1,4 +1,5 @@
-﻿using GameStore.API.Controllers;
+﻿using System.Text;
+using GameStore.API.Controllers;
 using GameStore.Application.DTOs.Games;
 using GameStore.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -182,5 +183,48 @@ public class GameControllerTests
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsType<bool>(okResult.Value);
         Assert.True(returnValue);
+    }
+
+    [Fact]
+    public async Task DownloadGameFileReturnsFile()
+    {
+        // Arrange
+        var key = "test-game";
+        var fileBytes = Encoding.UTF8.GetBytes("test content");
+
+        _mockGameService
+            .Setup(s => s.GenerateGameFileAsync(key))
+            .ReturnsAsync(fileBytes);
+
+        var controller = new GamesController(_mockGameService.Object);
+
+        // Act
+        var result = await controller.DownloadGameFile(key);
+
+        // Assert
+        var fileResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal("text/plain", fileResult.ContentType);
+        Assert.Equal(fileBytes, fileResult.FileContents);
+        Assert.Equal($"_{key}.txt", fileResult.FileDownloadName);
+    }
+
+    [Fact]
+    public async Task DownloadGameFileReturnsNotFoundWhenExceptionThrown()
+    {
+        // Arrange
+        var key = "invalid-game";
+
+        _mockGameService
+            .Setup(s => s.GenerateGameFileAsync(key))
+            .ThrowsAsync(new Exception("Game not found"));
+
+        var controller = new GamesController(_mockGameService.Object);
+
+        // Act
+        var result = await controller.DownloadGameFile(key);
+
+        // Assert
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal("Game not found", notFoundResult.Value);
     }
 }

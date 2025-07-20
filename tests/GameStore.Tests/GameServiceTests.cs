@@ -66,7 +66,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetGamesByGenreIdAsyncShouldResturnGamesListWhenGIvenGenreIdExist()
+    public async Task GetGamesByGenreIdAsyncValidGenreIdReturnsMatchingGames()
     {
         var genreId = Guid.NewGuid();
         var games = new List<Game>
