@@ -22,8 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\GameStore.API\GameStore.API.csproj" />
-    <ProjectReference Include="..\..\src\GameStore.Application\GameStore.Application.csproj" />
+    <ProjectReference Include="..\..\GameStore.Application\GameStore.Application.csproj" />
+    <ProjectReference Include="..\..\GameStore.API\GameStore.API.csproj" />
+    <ProjectReference Include="..\..\GameStore.Domain\GameStore.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
