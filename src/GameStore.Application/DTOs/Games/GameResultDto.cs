@@ -16,12 +16,12 @@ public class GameResultDto
     /// <summary>
     /// Gets or sets the name of the game.
     /// </summary>
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the unique key of the game.
     /// </summary>
-    public string Key { get; set; } = string.Empty;
+    public string Key { get; set; }
 
     /// <summary>
     /// Gets or sets the description of the game.

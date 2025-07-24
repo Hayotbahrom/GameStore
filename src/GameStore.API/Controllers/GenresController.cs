@@ -15,14 +15,22 @@ public class GenresController(IGenreService genreService) : ControllerBase
         => Ok(await _genreService.AddAsync(dto));
 
     [HttpGet]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _genreService.GetAllAsync());
 
     [HttpGet("{id}/genres")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetGenresByParentIdAsync(Guid id)
         => Ok(await _genreService.GetByParentIdAsync(id));
 
+    [HttpGet("games/{key}/genres")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> GetByGameKeyAsync(string key)
+        => Ok(await _genreService.GetByGameKeyAsync(key));
+
     [HttpGet("{id}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetByIdAsync(Guid id)
         => Ok(await _genreService.GetByIdAsync(id));
 
@@ -33,8 +41,4 @@ public class GenresController(IGenreService genreService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
         => Ok(await _genreService.DeleteAsync(id));
-
-    [HttpGet("/{genreId}/games")]
-    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid genreId)
-    => Ok(await _genreService.GetGamesByGenreIdAsync(genreId));
 }

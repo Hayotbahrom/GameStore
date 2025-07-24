@@ -43,6 +43,20 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     }
 
     /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
+    {
+        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
+    {
+        var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+    }
+
+    /// <inheritdoc/>
     public async Task<GameResultDto> GetByIdAsync(Guid id)
     {
         var game = await ValidateAndGetGameAsync(id);
@@ -114,6 +128,13 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         return fileContent;
     }
 
+    /// <inheritdoc/>
+    public async Task<int> GetTotalGamesCountAsync()
+    {
+        var games = _unitOfWork.Games.GetAll();
+        return await games.CountAsync();
+    }
+
     /// <summary>
     /// Generate a unique key for a game based on its name.
     /// </summary>
@@ -173,14 +194,14 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         var existingGenreIds = await _unitOfWork.Genres.GetExistingIdsAsync(game.GenreIds);
         var missingGenreIds = game.GenreIds.Except(existingGenreIds).ToList();
-        if (missingGenreIds.Count != 0)
+        if (missingGenreIds.Count > 0)
         {
             throw new CustomException(400, $"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
         }
 
         var existingPlatformIds = await _unitOfWork.Platforms.GetExistingIdsAsync(game.PlatformIds);
         var missingPlatformIds = game.PlatformIds.Except(existingPlatformIds).ToList();
-        if (missingPlatformIds.Count != 0)
+        if (missingPlatformIds.Count > 0)
         {
             throw new CustomException(400, $"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
         }

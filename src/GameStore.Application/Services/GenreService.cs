@@ -2,7 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using AutoMapper;
-using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
@@ -21,14 +20,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
-    {
-        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
-        return _mapper.Map<IEnumerable<GameResultDto>>(games);
-    }
-
-    /// <inheritdoc/>
-    public async Task<Guid> AddAsync(GenreCreationDto dto)
+    public async Task<GenreResultDto> AddAsync(GenreCreationDto dto)
     {
         var isExistParentGenre = await ValidateCreationDtoAsync(dto);
         if (isExistParentGenre)
@@ -42,7 +34,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
 
             await _unitOfWork.Genres.AddAsync(genre);
             await _unitOfWork.SaveChangesAsync();
-            return genre.Id;
+            return _mapper.Map<GenreResultDto>(genre);
         }
         else
         {
