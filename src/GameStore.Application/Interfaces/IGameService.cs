@@ -17,6 +17,20 @@ public interface IGameService
     Task<IEnumerable<GameResultDto>> GetAllAsync();
 
     /// <summary>
+    /// Gets all game associated with given genre ID asynchronously.
+    /// </summary>
+    /// <param name="genreId">The identifier of the genre.</param>
+    /// <returns>GameForResult list.</returns>
+    Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId);
+
+    /// <summary>
+    /// Gets all game associated with given platform ID asynchronously.
+    /// </summary>
+    /// <param name="platformId">The identifier of the platform.</param>
+    /// <returns>GameForResult list.</returns>
+    Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId);
+
+    /// <summary>
     /// Gets a game by its identifier asynchronously.
     /// </summary>
     /// <param name="id">The identifier of the game.</param>
@@ -57,4 +71,10 @@ public interface IGameService
     /// <param name="key">The unique game key used to find the game.</param>
     /// <returns>A byte array representing the content of the game file.</returns>
     Task<byte[]> GenerateGameFileAsync(string key);
+
+    /// <summary>
+    /// Get number of all games.
+    /// </summary>
+    /// <returns>All games count.</returns>
+    Task<int> GetTotalGamesCountAsync();
 }

@@ -1,8 +1,6 @@
 ﻿// <copyright file="IRepository.cs" company="GameStore">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-using System.Linq.Expressions;
-
 namespace GameStore.Infrastructure.IRepositories;
 
 /// <summary>
@@ -43,11 +41,4 @@ public interface IRepository<TEntity>
     /// <param name="id">The identifier of the entity.</param>
     /// <returns>The found entity or null if not found.</returns>
     Task<TEntity?> FindByIdAsync(Guid id);
-
-    /// <summary>
-    /// Finds entities that match a given condition.
-    /// </summary>
-    /// <param name="predicate">The expression used to filter entities.</param>
-    /// <returns>A collection of matching entities.</returns>
-    Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 }

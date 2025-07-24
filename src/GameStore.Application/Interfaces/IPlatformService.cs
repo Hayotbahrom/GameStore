@@ -1,7 +1,6 @@
 ﻿// <copyright file="IPlatformService.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 
 namespace GameStore.Application.Interfaces;
@@ -51,11 +50,4 @@ public interface IPlatformService
     /// <param name="id">The unique identifier of the platform to delete.</param>
     /// <returns>If successully deleted, return true, else false.</returns>
     Task<bool> DeleteAsync(Guid id);
-
-    /// <summary>
-    /// Gets all game associated with given platform ID asynchronously.
-    /// </summary>
-    /// <param name="platformId">The identifier of the platform.</param>
-    /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId);
 }
