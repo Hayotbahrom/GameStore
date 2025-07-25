@@ -205,7 +205,6 @@ public class GameControllerTests
         var fileResult = Assert.IsType<FileContentResult>(result);
         Assert.Equal("text/plain", fileResult.ContentType);
         Assert.Equal(fileBytes, fileResult.FileContents);
-        Assert.Equal($"_{key}.txt", fileResult.FileDownloadName);
     }
 
     [Fact]

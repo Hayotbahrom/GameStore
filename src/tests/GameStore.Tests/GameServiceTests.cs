@@ -7,6 +7,7 @@ using GameStore.Application.Exceptions;
 using GameStore.Application.Services;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
+using Microsoft.Extensions.Logging;
 using MockQueryable;
 using Moq;
 
@@ -21,13 +22,18 @@ public class GameServiceTests
 
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IMapper> _mapperMock;
+    private readonly Mock<ILogger<GameService>> _loggerMock;
     private readonly GameService _gameService;
 
     public GameServiceTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _mapperMock = new Mock<IMapper>();
-        _gameService = new GameService(_unitOfWorkMock.Object, _mapperMock.Object);
+        _loggerMock = new Mock<ILogger<GameService>>();
+        _gameService = new GameService(
+            _unitOfWorkMock.Object,
+            _mapperMock.Object,
+            _loggerMock.Object);
     }
 
     [Fact]
