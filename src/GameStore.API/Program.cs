@@ -46,6 +46,8 @@ app.UseMiddleware<ExceptionHandlerMiddleWare>();
 
 app.UseMiddleware<GameCountHeaderMiddleware>();
 
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseResponseCaching();
 
 app.UseAuthorization();

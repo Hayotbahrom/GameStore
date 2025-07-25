@@ -59,6 +59,7 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
         StackTrace: {ex.StackTrace}
         {(ex.InnerException is not null ? $"InnerException: {ex.InnerException.Message}" : string.Empty)}
         -------------------------------------------------------------------------
+
         """;
 
         File.AppendAllText(logPath, log);
