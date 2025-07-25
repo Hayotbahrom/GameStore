@@ -12,13 +12,14 @@ using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GameStore.Application.Services;
 
 /// <summary>
 /// Service for managing game-related operations.
 /// </summary>
-public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
+public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameService> logger) : IGameService
 {
     /// <summary>
     /// the unit of work instance used for database operations.
@@ -29,6 +30,9 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// The mapper for mapping between domain entities and DTOs.
     /// </summary>
     private readonly IMapper _mapper = mapper;
+
+    private readonly ILogger<GameService> _logger = logger;
+
     private static readonly JsonSerializerOptions? _jsonOptions = new()
     {
         WriteIndented = true,
@@ -39,6 +43,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<IEnumerable<GameResultDto>> GetAllAsync()
     {
         var games = await _unitOfWork.Games.GetAll().ToListAsync();
+        _logger.LogInformation("GetAllAsync() called");
+
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
@@ -46,6 +52,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
     {
         var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
+        _logger.LogInformation("GetGamesByGenreIdAsync called with genreId: {GenreId}", genreId);
+
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
@@ -53,6 +61,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
     {
         var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+        _logger.LogInformation("GetGamesByPlatformIdAsync called with genreId: {PlatformId}", platformId);
+
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
@@ -60,6 +70,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<GameResultDto> GetByIdAsync(Guid id)
     {
         var game = await ValidateAndGetGameAsync(id);
+        _logger.LogInformation("GetByIdAsync called with Id: {Id}", id);
+
         return _mapper.Map<GameResultDto>(game);
     }
 
@@ -67,6 +79,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<GameResultDto> GetByKeyAsync(string key)
     {
         var game = await _unitOfWork.Games.GetByKeyAsync(key);
+        _logger.LogInformation("GetByKeyAsync called with key: {Key}", key);
+
         return _mapper.Map<GameResultDto>(game) ?? throw new CustomException(404, "Game is not found");
     }
 
@@ -85,6 +99,9 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
 
         await _unitOfWork.Games.AddAsync(resultGame);
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game added successfully with this Id: {Id}", resultGame.Id);
+
         return _mapper.Map<GameResultDto>(resultGame);
     }
 
@@ -96,6 +113,9 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         _unitOfWork.Games.Delete(game);
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game deleted successfully with key: {Key}", key);
+
         return true;
     }
 
@@ -107,23 +127,24 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         ApplyGameUpdates(existingGame, game);
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game updated successfully with id: {Id}", existingGame.Id);
+
         return true;
     }
 
     /// <inheritdoc/>
     public async Task<byte[]> GenerateGameFileAsync(string key)
     {
-        var game = await _unitOfWork.Games.GetByKeyAsync(key);
-        if (game == null)
-        {
-            return null;
-        }
+        var game = await _unitOfWork.Games.GetByKeyAsync(key) ?? throw new CustomException(404, "Game key is not found.");
 
         var gameDto = _mapper.Map<GameResultDto>(game);
 
         var serializedGame = JsonSerializer.Serialize(gameDto, _jsonOptions);
 
         var fileContent = Encoding.UTF8.GetBytes(serializedGame);
+
+        _logger.LogInformation("Game file generated successfully");
 
         return fileContent;
     }
@@ -132,6 +153,9 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     public async Task<int> GetTotalGamesCountAsync()
     {
         var games = _unitOfWork.Games.GetAll();
+
+        _logger.LogInformation("Game count calculated successfully");
+
         return await games.CountAsync();
     }
 
@@ -177,18 +201,23 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
     /// <param name="game">Game creation dto.</param>
     private async Task ValidateGameAsync(GameCreationDto game)
     {
+        _logger.LogDebug("Validating game creation input...");
+
         if (game == null)
         {
+            _logger.LogWarning("Game creation failed: input is null.");
             throw new CustomException(400, "Game cannot be null.");
         }
 
         if (game.GenreIds == null || game.GenreIds.Count == 0)
         {
+            _logger.LogWarning("Game creation failed: missing genres.");
             throw new CustomException(400, "At least one genre must be provided.");
         }
 
         if (game.PlatformIds == null || game.PlatformIds.Count == 0)
         {
+            _logger.LogWarning("game creation failed: missing platforms.");
             throw new CustomException(400, "At least one platform must be provided.");
         }
 
@@ -196,6 +225,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         var missingGenreIds = game.GenreIds.Except(existingGenreIds).ToList();
         if (missingGenreIds.Count > 0)
         {
+            _logger.LogWarning("Invalid genre ids: {Ids}", string.Join(", ", missingGenreIds));
             throw new CustomException(400, $"The following genre IDs are invalid: {string.Join(", ", missingGenreIds)}");
         }
 
@@ -203,6 +233,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper) : IGameService
         var missingPlatformIds = game.PlatformIds.Except(existingPlatformIds).ToList();
         if (missingPlatformIds.Count > 0)
         {
+            _logger.LogWarning("Invalid platform ids: {Ids}", string.Join(", ", missingPlatformIds));
             throw new CustomException(400, $"The following platform IDs are invalid: {string.Join(", ", missingPlatformIds)}");
         }
     }
