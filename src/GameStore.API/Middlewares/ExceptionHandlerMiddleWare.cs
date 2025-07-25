@@ -30,6 +30,7 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception");
+            LogExceptionToFile(ex);
 
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
@@ -42,5 +43,24 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(problem));
         }
+    }
+
+    private static void LogExceptionToFile(Exception ex)
+    {
+        var logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
+        Directory.CreateDirectory(logDir);
+
+        var logPath = Path.Combine(logDir, $"{DateTime.UtcNow:yyyy-MM-dd}-exceptions.txt");
+
+        var log = $"""
+        [{DateTime.UtcNow:u}]
+        Type: {ex.GetType().Name}
+        Message: {ex.Message}
+        StackTrace: {ex.StackTrace}
+        {(ex.InnerException is not null ? $"InnerException: {ex.InnerException.Message}" : string.Empty)}
+        -------------------------------------------------------------------------
+        """;
+
+        File.AppendAllText(logPath, log);
     }
 }

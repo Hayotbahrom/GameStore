@@ -32,7 +32,7 @@ public class PlatformRepository(GameStoreDbContext context) : Repository<Platfor
     /// <inheritdoc/>
     public async Task<List<Guid>> GetExistingIdsAsync(List<Guid> ids)
     {
-        return await Context.Genres
+        return await Context.Platforms
             .Where(g => ids.Contains(g.Id))
             .Select(g => g.Id)
             .ToListAsync();
