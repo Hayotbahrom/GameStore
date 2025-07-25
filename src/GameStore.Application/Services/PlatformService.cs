@@ -8,16 +8,18 @@ using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
 using GameStore.Infrastructure.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace GameStore.Application.Services;
 
 /// <summary>
 /// Service for managing platform-related operations.
 /// </summary>
-public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatformService
+public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PlatformService> logger) : IPlatformService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
+    private readonly ILogger<PlatformService> _logger = logger;
 
     /// <inheritdoc />
     public async Task<PlatformResultDto> CreateAsync(PlatformCreationDto dto)
@@ -29,7 +31,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
         };
 
         await _unitOfWork.Platforms.AddAsync(platform);
+
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform added successfully with id: {Id}", platform.Id);
+
         return _mapper.Map<PlatformResultDto>(platform);
     }
 
@@ -39,7 +45,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
         var platform = await ValidatePlatformExistAsync(id);
 
         _unitOfWork.Platforms.Delete(platform);
+
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform deleted with id: {Id}", id);
+
         return true;
     }
 
@@ -47,6 +57,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     public async Task<IEnumerable<PlatformResultDto>> GetAllAsync()
     {
         var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
+
+        _logger.LogInformation("GetAllAsync called.");
+
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
@@ -54,6 +67,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     public async Task<IEnumerable<PlatformResultDto>> GetByGameKeyAsync(string gameKey)
     {
         var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
+
+        _logger.LogInformation("GetByGameKeyAsync called with gamekey: {Gamekey}", gameKey);
+
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
@@ -61,6 +77,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
     public async Task<PlatformResultDto?> GetByIdAsync(Guid id)
     {
         var platform = await ValidatePlatformExistAsync(id);
+
+        _logger.LogInformation("GetByIdAsync called with id: {Id}", id);
+
         return _mapper.Map<PlatformResultDto>(platform);
     }
 
@@ -70,13 +89,20 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper) : IPlatform
         var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
         existingPlatform.Type = dto.Type;
-        var result = await _unitOfWork.SaveChangesAsync();
-        return result > 0;
+
+        await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform updated with id: {Id}", dto.Id);
+
+        return true;
     }
 
     private async Task<Platform> ValidatePlatformExistAsync(Guid platformId)
     {
+        _logger.LogDebug("Validating platform creation input...");
+
         var platform = await _unitOfWork.Platforms.FindByIdAsync(platformId);
+
         return platform ?? throw new CustomException(404, "Platform is not found");
     }
 }
