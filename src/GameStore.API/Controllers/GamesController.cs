@@ -53,7 +53,8 @@ public class GamesController(IGameService gameService) : ControllerBase
         try
         {
             var fileBytes = await _gameService.GenerateGameFileAsync(key);
-            var fileName = $"_{key}.txt";
+            var timestamp = DateTime.UtcNow.ToString("ddMMyyyy_HHmmss");
+            var fileName = $"{key}_{timestamp}.txt";
 
             return File(fileBytes, "text/plain", fileName);
         }
