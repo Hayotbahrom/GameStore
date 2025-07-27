@@ -16,6 +16,9 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
         }
         catch (CustomException ex)
         {
+            _logger.LogError(ex, ex.Message);
+            LogExceptionToFile(ex);
+
             context.Response.StatusCode = ex.StatusCode;
             context.Response.ContentType = "application/json";
 
