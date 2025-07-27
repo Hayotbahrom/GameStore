@@ -30,11 +30,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
             Type = dto.Type,
         };
 
+        _logger.LogInformation("Platform added successfully with id: {Id}", platform.Id);
+
         await _unitOfWork.Platforms.AddAsync(platform);
 
         await _unitOfWork.SaveChangesAsync();
-
-        _logger.LogInformation("Platform added successfully with id: {Id}", platform.Id);
 
         return _mapper.Map<PlatformResultDto>(platform);
     }
@@ -44,11 +44,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     {
         var platform = await ValidatePlatformExistAsync(id);
 
+        _logger.LogInformation("Platform deleted with id: {Id}", id);
+
         _unitOfWork.Platforms.Delete(platform);
 
         await _unitOfWork.SaveChangesAsync();
-
-        _logger.LogInformation("Platform deleted with id: {Id}", id);
 
         return true;
     }
@@ -56,9 +56,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<IEnumerable<PlatformResultDto>> GetAllAsync()
     {
-        var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
-
         _logger.LogInformation("GetAllAsync called.");
+
+        var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
 
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
@@ -66,9 +66,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<IEnumerable<PlatformResultDto>> GetByGameKeyAsync(string gameKey)
     {
-        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
-
         _logger.LogInformation("GetByGameKeyAsync called with gamekey: {Gamekey}", gameKey);
+
+        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
 
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
@@ -76,9 +76,9 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<PlatformResultDto?> GetByIdAsync(Guid id)
     {
-        var platform = await ValidatePlatformExistAsync(id);
-
         _logger.LogInformation("GetByIdAsync called with id: {Id}", id);
+
+        var platform = await ValidatePlatformExistAsync(id);
 
         return _mapper.Map<PlatformResultDto>(platform);
     }
@@ -88,11 +88,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     {
         var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
+        _logger.LogInformation("Platform updated with id: {Id}", dto.Id);
+
         existingPlatform.Type = dto.Type;
 
         await _unitOfWork.SaveChangesAsync();
-
-        _logger.LogInformation("Platform updated with id: {Id}", dto.Id);
 
         return true;
     }
