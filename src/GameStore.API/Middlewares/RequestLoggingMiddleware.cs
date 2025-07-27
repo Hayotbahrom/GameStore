@@ -15,41 +15,47 @@ public class RequestLoggingMiddleware(RequestDelegate next)
     public async Task Invoke(HttpContext context)
     {
         var stopwatch = Stopwatch.StartNew();
-
         context.Request.EnableBuffering();
 
         var requestBody = await ReadRequestBody(context.Request);
         var originalBodyStream = context.Response.Body;
 
-        var responseBodyStream = new MemoryStream(); // removed await using
+        var responseBodyStream = new MemoryStream();
         context.Response.Body = responseBodyStream;
 
-        await _next(context); // Pass request down the pipeline
-
-        stopwatch.Stop();
-
-        responseBodyStream.Seek(0, SeekOrigin.Begin);
-        var responseBody = await new StreamReader(responseBodyStream).ReadToEndAsync();
-        responseBodyStream.Seek(0, SeekOrigin.Begin);
-
-        var logEntry = new
+        try
         {
-            Timestamp = DateTime.UtcNow.ToString("u"),
-            IP = context.Connection.RemoteIpAddress?.ToString(),
-            Method = context.Request.Method,
-            URL = context.Request.Path,
-            StatusCode = context.Response.StatusCode,
-            ElapsedMilliseconds = stopwatch.ElapsedMilliseconds,
-            RequestBody = requestBody,
-            ResponseBody = responseBody,
-        };
+            await _next(context);
+        }
+        finally
+        {
+            stopwatch.Stop();
 
-        var logText = JsonSerializer.Serialize(logEntry, options: _jsonOptions) +
-                      Environment.NewLine + new string('-', 100) + Environment.NewLine;
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
+            var responseBody = await new StreamReader(responseBodyStream).ReadToEndAsync();
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
 
-        WriteLogToFile(logText);
+            var logEntry = new
+            {
+                Timestamp = DateTime.UtcNow.ToString("u"),
+                IP = context.Connection.RemoteIpAddress?.ToString(),
+                Method = context.Request.Method,
+                URL = context.Request.Path,
+                StatusCode = context.Response.StatusCode,
+                ElapsedMilliseconds = stopwatch.ElapsedMilliseconds,
+                RequestBody = requestBody,
+                ResponseBody = responseBody,
+            };
 
-        await responseBodyStream.CopyToAsync(originalBodyStream);
+            var logText = JsonSerializer.Serialize(logEntry, options: _jsonOptions) +
+                          Environment.NewLine + new string('-', 100) + Environment.NewLine;
+
+            WriteLogToFile(logText);
+
+            responseBodyStream.Seek(0, SeekOrigin.Begin);
+            await responseBodyStream.CopyToAsync(originalBodyStream);
+            context.Response.Body = originalBodyStream;
+        }
     }
 
     private static async Task<string> ReadRequestBody(HttpRequest request)
