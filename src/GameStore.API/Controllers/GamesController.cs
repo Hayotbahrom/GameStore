@@ -19,15 +19,15 @@ public class GamesController(IGameService gameService) : ControllerBase
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _gameService.GetAllAsync());
 
-    [HttpGet("platforms/{platformId}/games")]
+    [HttpGet("/api/platforms/{id}/games")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid platformId)
-        => Ok(await _gameService.GetGamesByPlatformIdAsync(platformId));
+    public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid id)
+        => Ok(await _gameService.GetGamesByPlatformIdAsync(id));
 
-    [HttpGet("genres/{genreId}/games")]
+    [HttpGet("/api/genres/{id}/games")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid genreId)
-    => Ok(await _gameService.GetGamesByGenreIdAsync(genreId));
+    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid id)
+    => Ok(await _gameService.GetGamesByGenreIdAsync(id));
 
     [HttpGet("{key}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]

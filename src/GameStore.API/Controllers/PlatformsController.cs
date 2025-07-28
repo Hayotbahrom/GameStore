@@ -23,7 +23,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     public async Task<IActionResult> GetByIdAsync(Guid id)
         => Ok(await _platformService.GetByIdAsync(id));
 
-    [HttpGet("games/{key}/platforms")]
+    [HttpGet("/api/games/{key}/platforms")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetPlatformsByGameKeyAsync(string key)
         => Ok(await _platformService.GetByGameKeyAsync(key));
