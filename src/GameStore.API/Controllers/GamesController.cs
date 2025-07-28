@@ -50,17 +50,8 @@ public class GamesController(IGameService gameService) : ControllerBase
     [HttpGet("{key}/file")]
     public async Task<IActionResult> DownloadGameFile(string key)
     {
-        try
-        {
-            var fileBytes = await _gameService.GenerateGameFileAsync(key);
-            var timestamp = DateTime.UtcNow.ToString("ddMMyyyy_HHmmss");
-            var fileName = $"{key}_{timestamp}.txt";
+        var (fileBytes, fileName) = await _gameService.GenerateGameFileAsync(key);
 
-            return File(fileBytes, "text/plain", fileName);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        return File(fileBytes, "text/plain", fileName);
     }
 }

@@ -133,7 +133,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     }
 
     /// <inheritdoc/>
-    public async Task<byte[]> GenerateGameFileAsync(string key)
+    public async Task<(byte[] FileBytes, string FileName)> GenerateGameFileAsync(string key)
     {
         var game = await _unitOfWork.Games.GetByKeyAsync(key) ?? throw new CustomException(404, "Game key is not found.");
 
@@ -145,7 +145,11 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
 
         var fileContent = Encoding.UTF8.GetBytes(serializedGame);
 
-        return fileContent;
+        var timestamp = DateTime.UtcNow.ToString("ddMMyyyy-HHmmss");
+
+        var fileName = $"{key}_{timestamp}.txt";
+
+        return (fileContent, fileName);
     }
 
     /// <inheritdoc/>
