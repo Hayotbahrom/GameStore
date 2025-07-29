@@ -191,10 +191,12 @@ public class GameControllerTests
         // Arrange
         var key = "test-game";
         var fileBytes = Encoding.UTF8.GetBytes("test content");
+        var timestamp = DateTime.UtcNow.ToString("ddMMyyyy-HHmmss");
+        var fileName = $"{key}_{timestamp}.txt";
 
         _mockGameService
             .Setup(s => s.GenerateGameFileAsync(key))
-            .ReturnsAsync(fileBytes);
+            .ReturnsAsync((fileBytes, fileName));
 
         var controller = new GamesController(_mockGameService.Object);
 
@@ -205,25 +207,6 @@ public class GameControllerTests
         var fileResult = Assert.IsType<FileContentResult>(result);
         Assert.Equal("text/plain", fileResult.ContentType);
         Assert.Equal(fileBytes, fileResult.FileContents);
-    }
-
-    [Fact]
-    public async Task DownloadGameFileReturnsNotFoundWhenExceptionThrown()
-    {
-        // Arrange
-        var key = "invalid-game";
-
-        _mockGameService
-            .Setup(s => s.GenerateGameFileAsync(key))
-            .ThrowsAsync(new Exception("Game not found"));
-
-        var controller = new GamesController(_mockGameService.Object);
-
-        // Act
-        var result = await controller.DownloadGameFile(key);
-
-        // Assert
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Game not found", notFoundResult.Value);
+        Assert.Equal(fileName, fileResult.FileDownloadName);
     }
 }

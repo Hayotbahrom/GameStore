@@ -618,6 +618,8 @@ public class GameServiceTests
         // Arrange
         var gameKey = "minecraft";
         var existingGame = new Game { Id = Guid.NewGuid(), Name = "Minecraft", Key = gameKey };
+        var timestamp = DateTime.UtcNow.ToString("ddMMyyyy-HHmmss");
+        var expectedFileName = $"{gameKey}_{timestamp}.txt";
 
         var gameDto = new GameResultDto { Id = existingGame.Id, Name = existingGame.Name, Key = gameKey };
 
@@ -630,18 +632,36 @@ public class GameServiceTests
             .Returns(gameDto);
 
         // Act
-        var result = await _gameService.GenerateGameFileAsync(gameKey);
+        var (fileBytes, fileName) = await _gameService.GenerateGameFileAsync(gameKey);
 
         // Assert
-        Assert.NotNull(result);
+        Assert.NotNull(fileBytes);
+        Assert.NotNull(fileName);
 
         var serializedGame = JsonSerializer.Serialize(gameDto, _testJsonOptions);
         var expectedContent = Encoding.UTF8.GetBytes(serializedGame);
 
-        Assert.Equal(expectedContent, result);
+        Assert.Equal(expectedContent, fileBytes);
+        Assert.Equal(expectedFileName, fileName);
 
         _unitOfWorkMock.Verify(u => u.Games.GetByKeyAsync(gameKey), Times.Once);
         _mapperMock.Verify(m => m.Map<GameResultDto>(existingGame), Times.Once);
+    }
+
+    [Fact]
+    public async Task GenerateGameFileAsyncInvalidKeyShouldThrowException()
+    {
+        var invalidKey = "invalid-key";
+
+        _unitOfWorkMock
+            .Setup(u => u.Games.GetByKeyAsync(invalidKey))
+            .ReturnsAsync(null as Game);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<CustomException>(() => _gameService.GenerateGameFileAsync(invalidKey));
+
+        Assert.Equal(404, exception.StatusCode);
+        Assert.Equal("Game key is not found.", exception.Message);
     }
 
     [Fact]
