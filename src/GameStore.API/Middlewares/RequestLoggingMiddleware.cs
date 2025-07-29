@@ -1,16 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 
 namespace GameStore.API.Middlewares;
 
 public class RequestLoggingMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
-    private static readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        WriteIndented = true,
-    };
 
     public async Task Invoke(HttpContext context)
     {
@@ -23,11 +18,7 @@ public class RequestLoggingMiddleware(RequestDelegate next)
         var responseBodyStream = new MemoryStream();
         context.Response.Body = responseBodyStream;
 
-        try
-        {
-            await _next(context);
-        }
-        finally
+        context.Response.OnStarting(async () =>
         {
             stopwatch.Stop();
 
@@ -47,11 +38,26 @@ public class RequestLoggingMiddleware(RequestDelegate next)
                 ResponseBody = responseBody,
             };
 
-            var logText = JsonSerializer.Serialize(logEntry, options: _jsonOptions) +
-                          Environment.NewLine + new string('-', 100) + Environment.NewLine;
+            var logText =
+                $"Timestamp: {logEntry.Timestamp}\n" +
+                $"IP: {logEntry.IP}\n" +
+                $"Method: {logEntry.Method}\n" +
+                $"URL: {logEntry.URL}\n" +
+                $"StatusCode: {logEntry.StatusCode}\n" +
+                $"ElapsedMilliseconds: {logEntry.ElapsedMilliseconds}\n" +
+                $"RequestBody: {logEntry.RequestBody}\n" +
+                $"ResponseBody:\n{responseBody}\n" +
+                new string('-', 100) + "\n";
 
             WriteLogToFile(logText);
+        });
 
+        try
+        {
+            await _next(context);
+        }
+        finally
+        {
             responseBodyStream.Seek(0, SeekOrigin.Begin);
             await responseBodyStream.CopyToAsync(originalBodyStream);
             context.Response.Body = originalBodyStream;
