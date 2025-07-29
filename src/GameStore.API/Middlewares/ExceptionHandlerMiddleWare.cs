@@ -53,7 +53,7 @@ public class ExceptionHandlerMiddleWare(RequestDelegate requestDelegate, ILogger
         var logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
         Directory.CreateDirectory(logDir);
 
-        var logPath = Path.Combine(logDir, $"{DateTime.UtcNow:yyyy-MM-dd}-exceptions.txt");
+        var logPath = Path.Combine(logDir, $"exceptions-{DateTime.UtcNow:yyyy-MM-dd}.txt");
 
         var log = $"""
         [{DateTime.UtcNow:u}]

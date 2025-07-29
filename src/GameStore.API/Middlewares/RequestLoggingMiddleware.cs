@@ -71,7 +71,7 @@ public class RequestLoggingMiddleware(RequestDelegate next)
     {
         var logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
         Directory.CreateDirectory(logDir);
-        var logPath = Path.Combine(logDir, $"{DateTime.UtcNow:yyyy-MM-dd}-requests.txt");
+        var logPath = Path.Combine(logDir, $"requests-{DateTime.UtcNow:yyyy-MM-dd}.txt");
         File.AppendAllText(logPath, log);
     }
 }
