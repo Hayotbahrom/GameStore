@@ -17,7 +17,7 @@ public class GameServiceTests
     private static readonly JsonSerializerOptions? _testJsonOptions = new()
     {
         WriteIndented = true,
-        ReferenceHandler = ReferenceHandler.Preserve,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
     };
 
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;

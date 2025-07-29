@@ -36,7 +36,7 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     private static readonly JsonSerializerOptions? _jsonOptions = new()
     {
         WriteIndented = true,
-        ReferenceHandler = ReferenceHandler.Preserve,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
     };
 
     /// <inheritdoc/>
