@@ -25,17 +25,19 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<PlatformResultDto> CreateAsync(PlatformCreationDto dto)
     {
+        _logger.LogInformation("CreateAsync called. Creating platform with type : {Type}", dto.Type);
+
         var platform = new Platform
         {
             Id = Guid.NewGuid(),
             Type = dto.Type,
         };
 
-        _logger.LogInformation("Platform added successfully with id: {Id}", platform.Id);
-
         await _unitOfWork.Platforms.AddAsync(platform);
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform added successfully with id: {Id}", platform.Id);
 
         return _mapper.Map<PlatformResultDto>(platform);
     }
@@ -43,13 +45,15 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var platform = await ValidatePlatformExistAsync(id);
+        _logger.LogInformation("DeleteAsync called for PlatformId: {Id}", id);
 
-        _logger.LogInformation("Platform deleted with id: {Id}", id);
+        var platform = await ValidatePlatformExistAsync(id);
 
         _unitOfWork.Platforms.Delete(platform);
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform deleted with id: {Id}", id);
 
         return true;
     }
@@ -57,9 +61,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<IEnumerable<PlatformResultDto>> GetAllAsync()
     {
-        _logger.LogInformation("GetAllAsync called.");
+        _logger.LogDebug("GetAllAsync called.");
 
         var platforms = await _unitOfWork.Platforms.GetAll().ToListAsync();
+
+        _logger.LogInformation("Retrieved {Count} platforms.", platforms.Count);
 
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
@@ -68,7 +74,10 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
     {
         _logger.LogInformation("GetGamesByPlatformIdAsync called with genreId: {PlatformId}", platformId);
+
         var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+
+        _logger.LogInformation("Found {GameCount} games for PlatformId: {Id}", games.Count(), platformId);
 
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
@@ -76,9 +85,11 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<PlatformResultDto?> GetByIdAsync(Guid id)
     {
-        _logger.LogInformation("GetByIdAsync called with id: {Id}", id);
+        _logger.LogDebug("GetByIdAsync called with id: {Id}", id);
 
         var platform = await ValidatePlatformExistAsync(id);
+
+        _logger.LogInformation("Platform found. Id: {PlatformId}, Type: {Type}", platform.Id, platform.Type);
 
         return _mapper.Map<PlatformResultDto>(platform);
     }
@@ -86,13 +97,15 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
     /// <inheritdoc />
     public async Task<bool> UpdateAsync(PlatformUpdateDto dto)
     {
-        var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
+        _logger.LogInformation("UpdateAsync called. PlatformId: {Id}, new type: {Type}", dto.Id, dto.Type);
 
-        _logger.LogInformation("Platform updated with id: {Id}", dto.Id);
+        var existingPlatform = await ValidatePlatformExistAsync(dto.Id);
 
         existingPlatform.Type = dto.Type;
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Platform updated successfully. Id: {Id}", dto.Id);
 
         return true;
     }
@@ -103,6 +116,12 @@ public class PlatformService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<Pla
 
         var platform = await _unitOfWork.Platforms.FindByIdAsync(platformId);
 
-        return platform ?? throw new CustomException(404, "Platform is not found");
+        if (platform == null)
+        {
+            _logger.LogWarning("Platform not found. id: {Id}", platformId);
+            throw new CustomException(404, "Platform is not found");
+        }
+
+        return platform;
     }
 }
