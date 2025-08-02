@@ -44,8 +44,11 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     /// <inheritdoc/>
     public async Task<IEnumerable<GameResultDto>> GetAllAsync()
     {
-        _logger.LogInformation("GetAllAsync() called");
+        _logger.LogInformation("GetAllAsync called");
+
         var games = await _unitOfWork.Games.GetAll().ToListAsync();
+
+        _logger.LogInformation("Retrieved {Count} games", games.Count);
 
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
@@ -57,6 +60,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
 
         var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
 
+        _logger.LogInformation("Retrieved {Count} platforms given gamekey: {GameKey}", platforms.Count(), gameKey);
+
         return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
@@ -67,6 +72,8 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
 
         var genres = await _unitOfWork.Genres.GetByGameKeyAsync(gameKey);
 
+        _logger.LogInformation("Retrieved {Count} genres given gamekey: {GameKey}", genres.Count(), gameKey);
+
         return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
@@ -74,7 +81,10 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     public async Task<GameResultDto> GetByIdAsync(Guid id)
     {
         _logger.LogInformation("GetByIdAsync called with Id: {Id}", id);
+
         var game = await ValidateAndGetGameAsync(id);
+
+        _logger.LogInformation("Game found. game id: {Id}", id);
 
         return _mapper.Map<GameResultDto>(game);
     }
@@ -83,27 +93,38 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     public async Task<GameResultDto> GetByKeyAsync(string key)
     {
         _logger.LogInformation("GetByKeyAsync called with key: {Key}", key);
+
         var game = await _unitOfWork.Games.GetByKeyAsync(key);
 
-        return _mapper.Map<GameResultDto>(game) ?? throw new CustomException(404, "Game is not found");
+        if (game == null)
+        {
+            _logger.LogWarning("Game not found given gamekey: {GameKey}", key);
+            throw new CustomException(404, "Game is not found");
+        }
+
+        return _mapper.Map<GameResultDto>(game);
     }
 
     /// <inheritdoc/>
     public async Task<GameResultDto> AddAsync(GameCreationDto game)
     {
+        _logger.LogInformation("AddAsync called.Creating game name : {Name}", game.Name);
+
         await ValidateGameAsync(game);
 
         var resultGame = MapToGameEntity(game);
-        _logger.LogInformation("Game added successfully with this Id: {Id}", resultGame.Id);
 
         var existingGame = await _unitOfWork.Games.GetByKeyAsync(resultGame.Key!);
         if (existingGame != null)
         {
+            _logger.LogWarning("Game create failed. given gamekey already exist.");
             throw new CustomException(409, $"Game key '{game.Key}' already exists.");
         }
 
         await _unitOfWork.Games.AddAsync(resultGame);
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game added successfully with this Id: {Id}", resultGame.Id);
 
         return _mapper.Map<GameResultDto>(resultGame);
     }
@@ -111,13 +132,21 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     /// <inheritdoc/>
     public async Task<bool> DeleteAsync(string key)
     {
-        _logger.LogInformation("Game deleted successfully with key: {Key}", key);
+        _logger.LogInformation("DeleteAsync called. Game key: {Key}", key);
 
-        var game = await _unitOfWork.Games.GetByKeyAsync(key) ?? throw new CustomException(404, "Game not found with given Key.");
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
+
+        if (game == null)
+        {
+            _logger.LogWarning("Game delete failed. game key is not found ");
+            throw new CustomException(404, "Game not found with given Key.");
+        }
 
         _unitOfWork.Games.Delete(game);
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game deleted successfully with key: {Key}", key);
 
         return true;
     }
@@ -125,13 +154,15 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     /// <inheritdoc/>
     public async Task<bool> UpdateAsync(GameUpdateDto game)
     {
+        _logger.LogWarning("UpdateAsync called, game id: {Id}, name: {Name}", game.Id, game.Name);
+
         var existingGame = await ValidateAndGetGameAsync(game.Id);
 
         ApplyGameUpdates(existingGame, game);
 
-        _logger.LogInformation("Game updated successfully with id: {Id}", existingGame.Id);
-
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Game updated successfully with id: {Id}", existingGame.Id);
 
         return true;
     }
@@ -139,9 +170,15 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     /// <inheritdoc/>
     public async Task<(byte[] FileBytes, string FileName)> GenerateGameFileAsync(string key)
     {
-        var game = await _unitOfWork.Games.GetByKeyAsync(key) ?? throw new CustomException(404, "Game key is not found.");
+        _logger.LogInformation("GenerateGameFileAsync called. key: {Key}", key);
 
-        _logger.LogInformation("Game file generated successfully");
+        var game = await _unitOfWork.Games.GetByKeyAsync(key);
+
+        if (game is null)
+        {
+            _logger.LogWarning("Game file generate failed. Key not found");
+            throw new CustomException(404, "Game key is not found.");
+        }
 
         var gameDto = _mapper.Map<GameResultDto>(game);
 
@@ -153,17 +190,21 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
 
         var fileName = $"{key}_{timestamp}.txt";
 
+        _logger.LogInformation("Game file generated successfully");
+
         return (fileContent, fileName);
     }
 
     /// <inheritdoc/>
     public async Task<int> GetTotalGamesCountAsync()
     {
-        _logger.LogInformation("Game count calculated successfully");
+        _logger.LogInformation("GetTotalGamesCount called.");
 
-        var games = _unitOfWork.Games.GetAll();
+        var games = await _unitOfWork.Games.GetAll().ToListAsync();
 
-        return await games.CountAsync();
+        _logger.LogInformation("Retrieved {Count} games.", games.Count);
+
+        return games.Count;
     }
 
     /// <summary>
@@ -274,7 +315,16 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
     /// <returns>Game model.</returns>
     private async Task<Game> ValidateAndGetGameAsync(Guid gameId)
     {
+        _logger.LogDebug("Validating  existance game, game id: {Id}", gameId);
+
         var game = await _unitOfWork.Games.GetFullGameByIdAsync(gameId);
-        return game ?? throw new CustomException(404, "Game is not found.");
+
+        if (game is null)
+        {
+            _logger.LogWarning("Validation failed, game not found.");
+            throw new CustomException(404, "Game is not found.");
+        }
+
+        return game;
     }
 }
