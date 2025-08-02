@@ -19,20 +19,20 @@ public class GamesController(IGameService gameService) : ControllerBase
     public async Task<IActionResult> GetAllAsync()
         => Ok(await _gameService.GetAllAsync());
 
-    [HttpGet("/api/platforms/{id}/games")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetGamesByPlatformIdAsync(Guid id)
-        => Ok(await _gameService.GetGamesByPlatformIdAsync(id));
-
-    [HttpGet("/api/genres/{id}/games")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid id)
-    => Ok(await _gameService.GetGamesByGenreIdAsync(id));
-
     [HttpGet("{key}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
     public async Task<IActionResult> GetByKeyAsync(string key)
         => Ok(await _gameService.GetByKeyAsync(key));
+
+    [HttpGet("{key}/platforms")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> GetPlatformsByGameKeyAsync(string key)
+        => Ok(await _gameService.GetPlatformsByGameKeyAsync(key));
+
+    [HttpGet("{key}/genres")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> GetByGameKeyAsync(string key)
+        => Ok(await _gameService.GetGenresByGameKeyAsync(key));
 
     [HttpGet("find/{id}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]

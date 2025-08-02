@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using GameStore.Application.DTOs.Games;
+using GameStore.Application.DTOs.Genres;
+using GameStore.Application.DTOs.Platforms;
 
 namespace GameStore.Application.Interfaces;
 
@@ -17,18 +19,18 @@ public interface IGameService
     Task<IEnumerable<GameResultDto>> GetAllAsync();
 
     /// <summary>
-    /// Gets all game associated with given genre ID asynchronously.
+    /// Gets genres associated with a specific game key asynchronously.
     /// </summary>
-    /// <param name="genreId">The identifier of the genre.</param>
-    /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId);
+    /// <param name="gameKey">Game key.</param>
+    /// <returns>List of games by given gamekey.</returns>
+    Task<IEnumerable<GenreResultDto>> GetGenresByGameKeyAsync(string gameKey);
 
     /// <summary>
-    /// Gets all game associated with given platform ID asynchronously.
+    /// Gets platforms associated with a specific game by its key.
     /// </summary>
-    /// <param name="platformId">The identifier of the platform.</param>
-    /// <returns>GameForResult list.</returns>
-    Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId);
+    /// <param name="gameKey">Game key.</param>
+    /// <returns>List of platforms.</returns>
+    Task<IEnumerable<PlatformResultDto>> GetPlatformsByGameKeyAsync(string gameKey);
 
     /// <summary>
     /// Gets a game by its identifier asynchronously.

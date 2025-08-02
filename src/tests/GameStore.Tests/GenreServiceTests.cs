@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Services;
@@ -25,6 +26,78 @@ public class GenreServiceTests
             _unitOfWorkMock.Object,
             _mapperMock.Object,
             _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task GetGamesByGenreIdAsyncValidGenreIdReturnsMatchingGames()
+    {
+        var genreId = Guid.NewGuid();
+        var games = new List<Game>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Game",
+                Key = "1.6",
+                GameGenres = new List<GameGenre> { new() { GenreId = genreId } },
+                GamePlatforms = new List<GamePlatform>(),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Game 2",
+                Key = "20",
+                GameGenres = new List<GameGenre> { new() { GenreId = Guid.NewGuid() } },
+                GamePlatforms = new List<GamePlatform>(),
+            },
+        };
+        var expectedDtos = games.Where(x => x.GameGenres.Any(gg => gg.GenreId == genreId))
+            .Select(g => new GameResultDto
+            {
+                Id = g.Id,
+                Name = g.Name!,
+                Key = g.Key!,
+            });
+
+        _unitOfWorkMock.Setup(u => u.Games.GetGamesByGenreIdAsync(genreId))
+            .ReturnsAsync(games);
+
+        _mapperMock.Setup(m => m.Map<IEnumerable<GameResultDto>>(games))
+            .Returns(expectedDtos);
+
+        // Act
+        var result = await _genreService.GetGamesByGenreIdAsync(genreId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+
+        _unitOfWorkMock.Verify(u => u.Games.GetGamesByGenreIdAsync(genreId), Times.Once);
+        _mapperMock.Verify(m => m.Map<IEnumerable<GameResultDto>>(games), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGamesByGenreIdAsyncReturnsEmptyListWhenNoGamesExist()
+    {
+        // Arrange
+        var genreId = Guid.NewGuid();
+        var games = new List<Game>();
+
+        _unitOfWorkMock.Setup(u => u.Games.GetGamesByGenreIdAsync(genreId))
+            .ReturnsAsync(games);
+
+        _mapperMock.Setup(m => m.Map<IEnumerable<GameResultDto>>(games))
+            .Returns(new List<GameResultDto>());
+
+        // Act
+        var result = await _genreService.GetGamesByGenreIdAsync(genreId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+
+        _unitOfWorkMock.Verify(u => u.Games.GetGamesByGenreIdAsync(genreId), Times.Once);
+        _mapperMock.Verify(m => m.Map<IEnumerable<GameResultDto>>(games), Times.Once);
     }
 
     [Fact]
@@ -210,68 +283,6 @@ public class GenreServiceTests
         Assert.Equal($"Genre with ID {genreId} does not exist.", exception.Message);
 
         _unitOfWorkMock.Verify(u => u.Genres.FindByIdAsync(genreId), Times.Once);
-    }
-
-    [Fact]
-    public async Task GetByGameKeyAsyncShouldReturnGenresWhenGameKeyExist()
-    {
-        // Assert
-        var gameKey = "game-123";
-
-        var genres = new List<Genre>
-        {
-            new() { Id = Guid.NewGuid(), Name = "Action" },
-            new() { Id = Guid.NewGuid(), Name = "Mini" },
-        };
-
-        var genreDtos = genres.Select(p => new GenreResultDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-        }).ToList();
-
-        _unitOfWorkMock.Setup(u => u.Genres.GetByGameKeyAsync(gameKey))
-            .ReturnsAsync(genres);
-
-        _mapperMock.Setup(m => m.Map<IEnumerable<GenreResultDto>>(genres))
-            .Returns(genreDtos);
-
-        // Act
-        var result = await _genreService.GetByGameKeyAsync(gameKey);
-
-        // Arrange
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count());
-        Assert.Equal("Action", result.FirstOrDefault()?.Name);
-        Assert.Equal("Mini", result.LastOrDefault()?.Name);
-
-        // Verifications
-        _unitOfWorkMock.Verify(u => u.Genres.GetByGameKeyAsync(gameKey), Times.Once);
-        _mapperMock.Verify(m => m.Map<IEnumerable<GenreResultDto>>(genres), Times.Once);
-    }
-
-    [Fact]
-    public async Task GetByGameKeyAsyncInvalidGameKeyShouldReturnEmptyList()
-    {
-        // Arrange
-        var gameKey = "invalidGameKey";
-
-        _unitOfWorkMock
-            .Setup(u => u.Genres.GetByGameKeyAsync(gameKey))
-            .ReturnsAsync(new List<Genre>());
-
-        _mapperMock
-            .Setup(m => m.Map<IEnumerable<GenreResultDto>>(It.IsAny<IEnumerable<Genre>>()))
-            .Returns(new List<GenreResultDto>());
-
-        // Act
-        var result = await _genreService.GetByGameKeyAsync(gameKey);
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
-
-        _unitOfWorkMock.Verify(u => u.Genres.GetByGameKeyAsync(gameKey), Times.Once);
     }
 
     [Fact]

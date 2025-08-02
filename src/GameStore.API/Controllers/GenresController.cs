@@ -24,10 +24,10 @@ public class GenresController(IGenreService genreService) : ControllerBase
     public async Task<IActionResult> GetGenresByParentIdAsync(Guid id)
         => Ok(await _genreService.GetByParentIdAsync(id));
 
-    [HttpGet("/api/games/{key}/genres")]
+    [HttpGet("{id}/games")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetByGameKeyAsync(string key)
-        => Ok(await _genreService.GetByGameKeyAsync(key));
+    public async Task<IActionResult> GetGamesByGenreIdAsync(Guid id)
+        => Ok(await _genreService.GetGamesByGenreIdAsync(id));
 
     [HttpGet("{id}")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]

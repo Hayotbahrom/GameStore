@@ -2,6 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 using AutoMapper;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
@@ -75,13 +76,12 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     }
 
     /// <inheritdoc/>
-    public async Task<IEnumerable<GenreResultDto>> GetByGameKeyAsync(string gameKey)
+    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
     {
-        _logger.LogInformation("GetByGameKeyAsync called with gamekey: {Gamekey}", gameKey);
+        _logger.LogInformation("GetGamesByGenreIdAsync called with genreId: {GenreId}", genreId);
+        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
 
-        var genres = await _unitOfWork.Genres.GetByGameKeyAsync(gameKey);
-
-        return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
+        return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
     /// <inheritdoc/>

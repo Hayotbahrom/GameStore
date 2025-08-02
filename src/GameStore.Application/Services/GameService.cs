@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using GameStore.Application.DTOs.Games;
+using GameStore.Application.DTOs.Genres;
+using GameStore.Application.DTOs.Platforms;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Interfaces;
 using GameStore.Domain.Entities;
@@ -48,22 +50,24 @@ public class GameService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GameSer
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
+    /// <inheritdoc />
+    public async Task<IEnumerable<PlatformResultDto>> GetPlatformsByGameKeyAsync(string gameKey)
     {
-        _logger.LogInformation("GetGamesByGenreIdAsync called with genreId: {GenreId}", genreId);
-        var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
+        _logger.LogInformation("GetByGameKeyAsync called with gamekey: {Gamekey}", gameKey);
 
-        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+        var platforms = await _unitOfWork.Platforms.GetByGameKeyAsync(gameKey);
+
+        return _mapper.Map<IEnumerable<PlatformResultDto>>(platforms);
     }
 
-    /// <inheritdoc/>
-    public async Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId)
+    /// <inheritdoc />
+    public async Task<IEnumerable<GenreResultDto>> GetGenresByGameKeyAsync(string gameKey)
     {
-        _logger.LogInformation("GetGamesByPlatformIdAsync called with genreId: {PlatformId}", platformId);
-        var games = await _unitOfWork.Games.GetGamesByPlatformIdAsync(platformId);
+        _logger.LogInformation("GetGenresByGameKeyAsync called with gamekey: {Gamekey}", gameKey);
 
-        return _mapper.Map<IEnumerable<GameResultDto>>(games);
+        var genres = await _unitOfWork.Genres.GetByGameKeyAsync(gameKey);
+
+        return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
     /// <inheritdoc/>

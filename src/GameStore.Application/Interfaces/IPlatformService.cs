@@ -1,6 +1,7 @@
 ﻿// <copyright file="IPlatformService.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 
 namespace GameStore.Application.Interfaces;
@@ -24,11 +25,11 @@ public interface IPlatformService
     Task<PlatformResultDto?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Gets platforms associated with a specific game by its key.
+    /// Gets all game associated with given platform ID asynchronously.
     /// </summary>
-    /// <param name="gameKey">Game key.</param>
-    /// <returns>List of platforms.</returns>
-    Task<IEnumerable<PlatformResultDto>> GetByGameKeyAsync(string gameKey);
+    /// <param name="platformId">The identifier of the platform.</param>
+    /// <returns>GameForResult list.</returns>
+    Task<IEnumerable<GameResultDto>> GetGamesByPlatformIdAsync(Guid platformId);
 
     /// <summary>
     /// Creates a new platform.

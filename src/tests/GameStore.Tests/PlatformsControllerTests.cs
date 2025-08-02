@@ -1,4 +1,5 @@
 ﻿using GameStore.API.Controllers;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 using GameStore.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -50,30 +51,22 @@ public class PlatformsControllerTests
     }
 
     [Fact]
-    public async Task GetPlatformsByGameKeyShouldReturnPlatformsAssociatedWithGivenGameKey()
+    public async Task GetGamesByPlatformIdAsyncReturnsOkResultWithListOfGames()
     {
-        // Arrange
-        var key = "test-key";
-        var expectedPlatforms = new List<PlatformResultDto>
+        var platformId = Guid.NewGuid();
+        var games = new List<GameResultDto>
         {
-            new() { Id = Guid.NewGuid(), Type = "PC" },
-            new() { Id = Guid.NewGuid(), Type = "Xbox" },
+            new() { Id = Guid.NewGuid(), Name = "Game 1", Key = "game-1" },
+            new() { Id = Guid.NewGuid(), Name = "Game 2", Key = "game-2" },
         };
 
-        _mockPlatformService
-            .Setup(service => service.GetByGameKeyAsync(key))
-            .ReturnsAsync(expectedPlatforms);
+        _mockPlatformService.Setup(s => s.GetGamesByPlatformIdAsync(platformId)).ReturnsAsync(games);
 
-        var controller = new PlatformsController(_mockPlatformService.Object);
+        var result = await _controller.GetGamesByPlatformIdAsync(platformId);
 
-        // Act
-        var result = await controller.GetPlatformsByGameKeyAsync(key);
-
-        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        var actualPlatforms = Assert.IsAssignableFrom<List<PlatformResultDto>>(okResult.Value);
-        Assert.Equal(expectedPlatforms.Count, actualPlatforms.Count);
-        Assert.Equal(expectedPlatforms[0].Type, actualPlatforms[0].Type);
+        var returnValue = Assert.IsAssignableFrom<IEnumerable<GameResultDto>>(okResult.Value);
+        Assert.Equal(2, returnValue.Count());
     }
 
     [Fact]

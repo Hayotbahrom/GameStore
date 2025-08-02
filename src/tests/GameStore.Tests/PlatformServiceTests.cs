@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Platforms;
 using GameStore.Application.Exceptions;
 using GameStore.Application.Services;
@@ -67,6 +68,78 @@ public class PlatformServiceTests
         // Verify
         _unitOfWorkMock.Verify(u => u.Platforms.GetAll(), Times.Once);
         _mapperMock.Verify(m => m.Map<IEnumerable<PlatformResultDto>>(platforms), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatformIdAsyncShouldResturnGamesListWhenGivenPlatformIdExist()
+    {
+        var platformId = Guid.NewGuid();
+        var games = new List<Game>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Game",
+                Key = "1.6",
+                GamePlatforms = new List<GamePlatform> { new() { PlatformId = platformId } },
+                GameGenres = new List<GameGenre>(),
+            },
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Game 2",
+                Key = "20",
+                GamePlatforms = new List<GamePlatform> { new() { PlatformId = platformId } },
+                GameGenres = new List<GameGenre>(),
+            },
+        };
+        var expectedDtos = games.Where(x => x.GamePlatforms.Any(gg => gg.PlatformId == platformId))
+            .Select(g => new GameResultDto
+            {
+                Id = g.Id,
+                Name = g.Name!,
+                Key = g.Key!,
+            });
+
+        _unitOfWorkMock.Setup(u => u.Games.GetGamesByPlatformIdAsync(platformId))
+            .ReturnsAsync(games);
+
+        _mapperMock.Setup(m => m.Map<IEnumerable<GameResultDto>>(games))
+            .Returns(expectedDtos);
+
+        // Act
+        var result = await _platformService.GetGamesByPlatformIdAsync(platformId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count());
+
+        _unitOfWorkMock.Verify(u => u.Games.GetGamesByPlatformIdAsync(platformId), Times.Once);
+        _mapperMock.Verify(m => m.Map<IEnumerable<GameResultDto>>(games), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatformIdAsyncReturnsEmptyListWithGivenPlatformIdWhenNoGamesExist()
+    {
+        // Arrange
+        var platformId = Guid.NewGuid();
+        var games = new List<Game>();
+
+        _unitOfWorkMock.Setup(u => u.Games.GetGamesByPlatformIdAsync(platformId))
+            .ReturnsAsync(games);
+
+        _mapperMock.Setup(m => m.Map<IEnumerable<GameResultDto>>(games))
+            .Returns(new List<GameResultDto>());
+
+        // Act
+        var result = await _platformService.GetGamesByPlatformIdAsync(platformId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+
+        _unitOfWorkMock.Verify(u => u.Games.GetGamesByPlatformIdAsync(platformId), Times.Once);
+        _mapperMock.Verify(m => m.Map<IEnumerable<GameResultDto>>(games), Times.Once);
     }
 
     [Fact]
@@ -156,44 +229,6 @@ public class PlatformServiceTests
         Assert.Equal(platform.Id, result.Id);
         _unitOfWorkMock.Verify(u => u.Platforms.FindByIdAsync(platform.Id), Times.Once);
         _mapperMock.Verify(m => m.Map<PlatformResultDto>(platform), Times.Once);
-    }
-
-    [Fact]
-    public async Task GetByGameKeyAsyncShouldReturnPlatformsWhenGameKeyExist()
-    {
-        // Assert
-        var gameKey = "game-123";
-
-        var platforms = new List<Platform>
-        {
-            new() { Id = Guid.NewGuid(), Type = "PC" },
-            new() { Id = Guid.NewGuid(), Type = "PlayStation" },
-        };
-
-        var platformDtos = platforms.Select(p => new PlatformResultDto
-        {
-            Id = p.Id,
-            Type = p.Type,
-        }).ToList();
-
-        _unitOfWorkMock.Setup(u => u.Platforms.GetByGameKeyAsync(gameKey))
-            .ReturnsAsync(platforms);
-
-        _mapperMock.Setup(m => m.Map<IEnumerable<PlatformResultDto>>(platforms))
-            .Returns(platformDtos);
-
-        // Act
-        var result = await _platformService.GetByGameKeyAsync(gameKey);
-
-        // Arrange
-        Assert.NotNull(result);
-        Assert.Equal(2, result.Count());
-        Assert.Equal("PC", result.FirstOrDefault()?.Type);
-        Assert.Equal("PlayStation", result.LastOrDefault()?.Type);
-
-        // Verifications
-        _unitOfWorkMock.Verify(u => u.Platforms.GetByGameKeyAsync(gameKey), Times.Once);
-        _mapperMock.Verify(m => m.Map<IEnumerable<PlatformResultDto>>(platforms), Times.Once);
     }
 
     [Fact]

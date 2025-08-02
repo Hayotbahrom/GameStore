@@ -1,6 +1,7 @@
 ﻿// <copyright file="IGenreService.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
+using GameStore.Application.DTOs.Games;
 using GameStore.Application.DTOs.Genres;
 
 namespace GameStore.Application.Interfaces;
@@ -17,6 +18,13 @@ public interface IGenreService
     Task<IEnumerable<GenreResultDto>> GetAllAsync();
 
     /// <summary>
+    /// Gets all game associated with given genre ID asynchronously.
+    /// </summary>
+    /// <param name="genreId">The identifier of the genre.</param>
+    /// <returns>GameForResult list.</returns>
+    Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId);
+
+    /// <summary>
     /// Gets a genre by its identifier asynchronously.
     /// </summary>
     /// <param name="id">Genre id.</param>
@@ -29,13 +37,6 @@ public interface IGenreService
     /// <param name="parentId">Parent genre id.</param>
     /// <returns>List of GenreFoResultDto.</returns>
     Task<IEnumerable<GenreResultDto>> GetByParentIdAsync(Guid parentId);
-
-    /// <summary>
-    /// Gets genres associated with a specific game key asynchronously.
-    /// </summary>
-    /// <param name="gameKey">Game key.</param>
-    /// <returns>List of games by given gamekey.</returns>
-    Task<IEnumerable<GenreResultDto>> GetByGameKeyAsync(string gameKey);
 
     /// <summary>
     /// Adds a new genre asynchronously.
