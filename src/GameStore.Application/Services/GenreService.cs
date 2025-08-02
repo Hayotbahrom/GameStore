@@ -25,6 +25,8 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     /// <inheritdoc/>
     public async Task<GenreResultDto> AddAsync(GenreCreationDto dto)
     {
+        _logger.LogInformation("AddAsync called. Creating genre with name: {Name}", dto.Name);
+
         var isExistParentGenre = await ValidateCreationDtoAsync(dto);
         if (isExistParentGenre)
         {
@@ -35,10 +37,10 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
                 ParentGenreId = dto.ParentGenreId,
             };
 
-            _logger.LogInformation("Genre added successfully with id: {Id}", genre.Id);
-
             await _unitOfWork.Genres.AddAsync(genre);
             await _unitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation("Genre added successfully with id: {Id}", genre.Id);
 
             return _mapper.Map<GenreResultDto>(genre);
         }
@@ -52,12 +54,14 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     /// <inheritdoc/>
     public async Task<bool> DeleteAsync(Guid id)
     {
-        _logger.LogInformation("Genre deleted successfully with id: {Id}", id);
+        _logger.LogInformation("DeleteAsync called, Id: {Id}", id);
 
         var existingGenre = await ValidateGenreAsync(id);
 
         _unitOfWork.Genres.Delete(existingGenre);
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Genre deleted successfully with id: {Id}", id);
 
         return true;
     }
@@ -72,6 +76,8 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
             .Include(x => x.ParentGenre)
             .ToListAsync();
 
+        _logger.LogInformation("Retrieved {Count} genres.", genres.Count);
+
         return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
@@ -79,7 +85,10 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     public async Task<IEnumerable<GameResultDto>> GetGamesByGenreIdAsync(Guid genreId)
     {
         _logger.LogInformation("GetGamesByGenreIdAsync called with genreId: {GenreId}", genreId);
+
         var games = await _unitOfWork.Games.GetGamesByGenreIdAsync(genreId);
+
+        _logger.LogInformation("Found {Count} games for genreId: {GenreId}", games.Count(), genreId);
 
         return _mapper.Map<IEnumerable<GameResultDto>>(games);
     }
@@ -91,6 +100,8 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
 
         var genre = await ValidateGenreAsync(id);
 
+        _logger.LogInformation("Genre found. Id: {Id}, Name: {Name}", genre.Id, genre.Name);
+
         return _mapper.Map<GenreResultDto>(genre);
     }
 
@@ -101,20 +112,23 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
 
         var genres = await _unitOfWork.Genres.GetByParentIdAsync(parentId);
 
+        _logger.LogInformation("Found {Count} genres under ParentGenreId: {Id}", genres.Count(), parentId);
+
         return _mapper.Map<IEnumerable<GenreResultDto>>(genres);
     }
 
     /// <inheritdoc/>
     public async Task<bool> UpdateAsync(GenreUpdateDto dto)
     {
+        _logger.LogInformation("UpdateAsync called. GenreId :{Id}", dto.Id);
         var existingGenre = await ValidateGenreAsync(dto.Id);
-
-        _logger.LogInformation("Genre updated successfuly with id: {Id}", dto.Id);
 
         existingGenre.Name = dto.Name;
         existingGenre.ParentGenreId = dto.ParentGenreId;
 
         await _unitOfWork.SaveChangesAsync();
+
+        _logger.LogInformation("Genre updated successfuly with id: {Id}", dto.Id);
 
         return true;
     }
@@ -126,11 +140,17 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     /// <returns>Genre model.</returns>
     private async Task<Genre> ValidateGenreAsync(Guid genreId)
     {
-        _logger.LogDebug("Validating genre is exist or not with given id : {Id} ...", genreId);
+        _logger.LogDebug("Validating existence genre. GenreId : {Id} ...", genreId);
 
         var genre = await _unitOfWork.Genres.FindByIdAsync(genreId);
 
-        return genre ?? throw new CustomException(404, $"Genre with ID {genreId} does not exist.");
+        if (genre is null)
+        {
+            _logger.LogWarning("Validation failed, Genre not found, id : {Id}", genreId);
+            throw new CustomException(404, $"Genre with ID {genreId} does not exist.");
+        }
+
+        return genre;
     }
 
     /// <summary>
@@ -142,15 +162,17 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<GenreS
     {
         if (dto.ParentGenreId != null)
         {
-            _logger.LogDebug("Validating genre creation input...");
+            _logger.LogDebug("Validating ParentGenreId: {ParentId}", dto.ParentGenreId);
 
             var parentGenre = await _unitOfWork.Genres.FindByIdAsync((Guid)dto.ParentGenreId);
 
-            return parentGenre == null ? throw new CustomException(404, "Parent genre not found") : true;
+            if (parentGenre is null)
+            {
+                _logger.LogWarning("Parent genre not found. ParentGenreId : {ParentId}", dto.ParentGenreId);
+                throw new CustomException(404, "Parent genre not found");
+            }
         }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
 }
