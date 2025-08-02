@@ -2,6 +2,7 @@ using GameStore.API.Extentions;
 using GameStore.API.Middlewares;
 using GameStore.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,14 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .WithExposedHeaders("X-Total-Numbers-Of-Games");
     }));
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
