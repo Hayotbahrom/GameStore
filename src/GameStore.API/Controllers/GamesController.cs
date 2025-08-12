@@ -11,7 +11,7 @@ public class GamesController(IGameService gameService) : ControllerBase
     private readonly IGameService _gameService = gameService;
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(GameCreationDto dto)
+    public async Task<IActionResult> AddAsync(GameCreationDto dto)
         => Ok(await _gameService.AddAsync(dto));
 
     [HttpGet]
@@ -31,7 +31,7 @@ public class GamesController(IGameService gameService) : ControllerBase
 
     [HttpGet("{key}/genres")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
-    public async Task<IActionResult> GetByGameKeyAsync(string key)
+    public async Task<IActionResult> GetGenresByGameKeyAsync(string key)
         => Ok(await _gameService.GetGenresByGameKeyAsync(key));
 
     [HttpGet("find/{id}")]

@@ -10,7 +10,7 @@ public class PlatformsController(IPlatformService platformService) : ControllerB
     private readonly IPlatformService _platformService = platformService;
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(PlatformCreationDto dto)
+    public async Task<IActionResult> AddAsync(PlatformCreationDto dto)
         => Ok(await _platformService.CreateAsync(dto));
 
     [HttpGet]
