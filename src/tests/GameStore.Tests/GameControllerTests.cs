@@ -107,7 +107,7 @@ public class GameControllerTests
             .ReturnsAsync(expectedResult);
 
         // Act
-        var result = await _controller.CreateAsync(dto);
+        var result = await _controller.AddAsync(dto);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);

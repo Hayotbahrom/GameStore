@@ -1,8 +1,8 @@
 using GameStore.API.Extentions;
+using GameStore.API.Logging;
 using GameStore.API.Middlewares;
 using GameStore.Infrastructure.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,13 +30,16 @@ builder.Services.AddCors(options =>
             .WithExposedHeaders("X-Total-Numbers-Of-Games");
     }));
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
-builder.Host.UseSerilog();
+builder.Logging.AddFileLogging(options =>
+{
+    options.DirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+    options.FilePattern = "log_{yyyy-MM-dd}.txt";
+    options.MinLevel = LogLevel.Information;
+});
 
 var app = builder.Build();
 

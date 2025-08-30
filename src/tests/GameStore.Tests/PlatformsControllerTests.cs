@@ -25,7 +25,7 @@ public class PlatformsControllerTests
 
         _mockPlatformService.Setup(s => s.CreateAsync(dto)).ReturnsAsync(created);
 
-        var result = await _controller.CreateAsync(dto);
+        var result = await _controller.AddAsync(dto);
 
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsType<PlatformResultDto>(okResult.Value);

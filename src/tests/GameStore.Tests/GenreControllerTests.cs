@@ -35,7 +35,7 @@ public class GenreControllerTests
         _mockGenreService.Setup(s => s.AddAsync(dto)).ReturnsAsync(expected);
 
         // Act
-        var result = await _controller.CreateAsync(dto);
+        var result = await _controller.AddAsync(dto);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -122,7 +122,7 @@ public class GenreControllerTests
         _mockGenreService.Setup(s => s.UpdateAsync(dto)).ReturnsAsync(true);
 
         // Act
-        var result = await _controller.PutAsync(dto);
+        var result = await _controller.UpdateAsync(dto);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
